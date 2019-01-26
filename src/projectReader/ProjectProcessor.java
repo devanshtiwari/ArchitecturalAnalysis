@@ -11,7 +11,7 @@ public class ProjectProcessor {
     private CommandProcessor commandProcessor = new CommandProcessor();
 //    private HashMap<String, HashSet<String>> fileHeaders = new HashMap<>();
 
-    ArrayList<ArrayList<String>> fileHeaders = new ArrayList<>();
+    List<List<String>> fileHeaders = new ArrayList<>();
     ProjectDirectoryReader projectDirectoryReader;
 
     public void projectParse(File proj) throws NotDirectoryException {
@@ -22,9 +22,9 @@ public class ProjectProcessor {
         this.fileHeaders = commandProcessor.setHeaders(projectDirectoryReader);
     }
 
-    public ArrayList<ArrayList<String>> getFileDependencyCSVFormat(ProjectDirectoryReader projectDirectoryReader, Boolean headers){
+    public List<List<String>> getFileDependencyCSVFormat(ProjectDirectoryReader projectDirectoryReader, Boolean headers){
 
-        ArrayList<ArrayList<String>> csv = new ArrayList<>();
+        List<List<String>> csv = new ArrayList<>();
         if(headers) {
             ArrayList<String> header = new ArrayList<>(Arrays.asList("File","Function","File", "Function"));
             csv.add(header);
@@ -58,16 +58,16 @@ public class ProjectProcessor {
         return csv;
     }
 
-    public ArrayList<ArrayList<String>> getFileInfoCSVFormat(Boolean headers) {
+    public List<List<String>> getFileInfoCSVFormat(Boolean headers) {
         if(headers) {
-            ArrayList<String> header = new ArrayList<>(Arrays.asList("File","Headers"));
+            List<String> header = new ArrayList<>(Arrays.asList("File","Headers"));
             fileHeaders.add(0,header);
         }
         return fileHeaders;
     }
 
-    public ArrayList<ArrayList<String>> getFunctionInfoCSVFormat(Boolean headers){
-        ArrayList<ArrayList<String>> csv = new ArrayList<>();
+    public List<List<String>> getFunctionInfoCSVFormat(Boolean headers){
+        List<List<String>> csv = new ArrayList<>();
         if(headers) {
             ArrayList<String> header = new ArrayList<>(Arrays.asList("File Name","Function Name","Parameters","Count"));
             csv.add(header);
@@ -90,9 +90,9 @@ public class ProjectProcessor {
         return csv;
     }
 
-    public ArrayList<ArrayList<String>> getHeaderToFileCSVFormat(Boolean headers) {
+    public List<List<String>> getHeaderToFileCSVFormat(Boolean headers) {
         HashMap<File, HashSet<File>> headerToFile = commandProcessor.getHeaderToFile();
-        ArrayList<ArrayList<String>> csv = new ArrayList<>();
+        List<List<String>> csv = new ArrayList<>();
         if(headers) {
             ArrayList<String> header = new ArrayList<>(Arrays.asList("Header File Location","Header Name","Included By","Count"));
             csv.add(header);

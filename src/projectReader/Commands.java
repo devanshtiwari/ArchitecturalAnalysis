@@ -22,6 +22,12 @@ public class Commands {
         ProcessBuilder pb = new ProcessBuilder("ctags", "-x","--extras=r","--kinds-c=h","--language-force=c",f.getAbsolutePath());
         System.out.println(pb.command().toString());
         Process proc = pb.start();
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+//        String line = "" ;
+//        while((line = reader.readLine()) != null) {
+//            String[] splits = line.split("\\s+");
+////            (splits[0].substring(splits[0].lastIndexOf("/")+1));
+//        }
         return new BufferedReader(new InputStreamReader(proc.getInputStream()));
     }
 

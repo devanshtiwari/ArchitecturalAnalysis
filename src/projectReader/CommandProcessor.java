@@ -120,10 +120,10 @@ public class CommandProcessor {
     }
 
 
-    public ArrayList<ArrayList<String>> setHeaders(ProjectDirectoryReader projectDirectoryReader){
+    public List<List<String>> setHeaders(ProjectDirectoryReader projectDirectoryReader){
 
-        ArrayList<ArrayList<String>> fileHeadersCSV = new ArrayList<>();
-        ArrayList<File> dirHeaders = projectDirectoryReader.getHeaderFiles();
+        List<List<String>> fileHeadersCSV = new ArrayList<>();
+        List<File> dirHeaders = projectDirectoryReader.getHeaderFiles();
 
         HashSet<File> dirHeadersForUpdate = new HashSet<>();
         for(File file:projectDirectoryReader.getSourceFiles()){
@@ -134,6 +134,7 @@ public class CommandProcessor {
 
             while(iterator.hasNext()){
                 String hhf = iterator.next();
+
                 Iterator<File> dirHeaderiterator = dirHeaders.iterator();
                 Boolean check = false;
                 while(dirHeaderiterator.hasNext()){
@@ -219,6 +220,7 @@ public class CommandProcessor {
                 FilePoint fp1 = new FilePoint();
                 FilePoint fp2 = new FilePoint();
 
+
 //                Pattern p1 = Pattern.compile("^\\{\\s+(\\d+)}(\\s+)(\\S+)\\(\\)\\s?(<(unsigned |__const unsigned |__inline |struct |const |__const |__inline__ |)(\\S+)\\s(\\*\\S+\\s|)(\\S+)\\s(\\(([^)]+)\\)\\s)?\\(([^)]+)?\\)\\sat\\s([^:]+):(\\d+)>(\\s\\(R\\))?(\\s\\([^)]+?\\))?)?([:]?)");
 //                Pattern p2 = Pattern.compile("^\\{\\s+(\\d+)}(\\s+)(\\S+)\\(\\)\\s?(<.*:(\\d+)>)?\\s?(\\(.*\\))?([:]?)?");
 
@@ -288,16 +290,16 @@ public class CommandProcessor {
                     fp2.setFunction(cFlowLine.function.name);
                     if(cFlowLine.function.funSourceFile!=null)
                         fp2.setFile(new File(cFlowLine.function.funSourceFile));
-                    else if(true) {
+                    else{
                         File f = searchFunction(cFlowLine.file, cFlowLine.function.name);
                         if(f!=null)
                             fp2.setFile(f);
-                    }
-                    else
-                    {
+                        else
+                        {
 
-                        System.out.println("Did not find defined place for " + cFlowLine.getFunction());
-                        fp2.setFile(null);
+                            System.out.println("Did not find defined place for " + cFlowLine.getFunction());
+                            fp2.setFile(null);
+                        }
                     }
 
                     if(whichMatcher == 1 && matcher.group(16)!=null)

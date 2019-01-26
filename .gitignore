@@ -104,3 +104,6 @@ Output Bad/
 *.csv
 *.png
 projects.txt
+
+CSVMetrics/
+src/.DS_Store

@@ -34,10 +34,18 @@ public class CSVWriter {
         this.fileWriter = new FileWriter(new File(writeDir,file.getName()+".csv"));
     }
 
-    public void writez(ArrayList<ArrayList<String>> csvData) throws Exception {
+    public void setFile(String file) throws IOException {
+        setFile(new File(file));
+    }
+
+    public void setFile(String subDir, String file) throws IOException {
+        setFile(subDir, new File(file));
+    }
+
+    public void writez(List<List<String>> csvData) throws Exception {
         if(fileWriter == null)
             throw new Exception("File not set. Call setFile Function before calling write");
-        for(ArrayList line:csvData){
+        for(List line:csvData){
             for(Object cell:line){
                 fileWriter.append((String) cell);
                 fileWriter.append(COMMA_DELIMITER);

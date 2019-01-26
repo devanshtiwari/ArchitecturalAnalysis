@@ -19,11 +19,10 @@ public class App {
 
     public static void main(String[] args) throws Exception {
 
-        String projectDir = "/Users/devan/Documents/ArchitecturalAnalysis/ProjectsSources/Custom";
+        String projectDir = "/Users/devan/Documents/ArchitecturalAnalysis/ProjectsSources/Bad";
 
         ArrayList<File> projPaths = DirManager.getDirectories(projectDir);
 
-        ProjectProcessor projectProcessor  =new ProjectProcessor();
         CSVWriter csvWriter = new CSVWriter("CSV");
 
         for (File proj : projPaths) {
@@ -34,15 +33,15 @@ public class App {
 
             ProjectDirectoryReader projectDirectoryReader = new ProjectDirectoryReader(proj);
             //TODO can be done in a single go
-
+            ProjectProcessor projectProcessor  =new ProjectProcessor();
             projectProcessor.projectParse(proj);
 
 
 //            headers.put(proj.getName(),h);
-            ArrayList<ArrayList<String>> dependencyCSVData = projectProcessor.getFileDependencyCSVFormat(projectDirectoryReader,true);
-            ArrayList<ArrayList<String>> fileInfoCSV = projectProcessor.getFileInfoCSVFormat(true);
-            ArrayList<ArrayList<String>> functionInfoCSV = projectProcessor.getFunctionInfoCSVFormat(true);
-            ArrayList<ArrayList<String>> headerToFileCSV = projectProcessor.getHeaderToFileCSVFormat(true);
+            List<List<String>> dependencyCSVData = projectProcessor.getFileDependencyCSVFormat(projectDirectoryReader,true);
+            List<List<String>> fileInfoCSV = projectProcessor.getFileInfoCSVFormat(true);
+            List<List<String>> functionInfoCSV = projectProcessor.getFunctionInfoCSVFormat(true);
+            List<List<String>> headerToFileCSV = projectProcessor.getHeaderToFileCSVFormat(true);
 
 
             csvWriter.setFile("Dependencies",projectDirectoryReader.getProjectFile());

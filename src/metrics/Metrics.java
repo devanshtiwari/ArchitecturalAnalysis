@@ -21,9 +21,13 @@ public class Metrics {
     private HashSet<DefaultWeightedEdge> cycleAllEdges = new HashSet<>();
     private HashSet<DefaultWeightedEdge> cycleMinEdges = new HashSet<>();
 
+    public static DirectedWeightedPseudograph<String, DefaultWeightedEdge> sfilegraph;
+
     public Metrics(Graph graph) {
         this.graph = graph;
         ArrayList pathSoFar = new ArrayList<String>();
+        if(graph.mainFile.isEmpty())
+            graph.mainFile = graph.getFileGraph().vertexSet().iterator().next();
         pathSoFar.add(graph.mainFile);
         System.out.println("Main Function: " + graph.mainFunc);
         filegraph = (DirectedWeightedPseudograph<String, DefaultWeightedEdge>) graph.getFileGraph().clone();
@@ -77,7 +81,6 @@ public class Metrics {
 
         for (String v : fileG.vertexSet()) {
             double[] inout = inoutDegree(fileG, v);
-            ;
             numerator += inout[0] * inout[1];
         }
         complexity = numerator / ((numberOfFiles() - 1) * (numberOfFiles() - 1));
@@ -85,7 +88,7 @@ public class Metrics {
         return complexity;
     }
 
-    double[] inoutDegree(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g, String v) {
+    static double[] inoutDegree(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g, String v) {
         double[] inout = {0.0, 0.0};
         for (DefaultWeightedEdge e : g.incomingEdgesOf(v))
             inout[0] += g.getEdgeWeight(e);
@@ -174,6 +177,7 @@ public class Metrics {
         }
         pathSoFar.clear();
     }
+
 
     public double normalizedCycleEdges() {
 
@@ -304,7 +308,7 @@ public class Metrics {
         }
     }
 
-    public double cuttingNumber(DirectedWeightedPseudograph g){
+    public static double cuttingNumber(DirectedWeightedPseudograph g){
         double cnum = 0;
         double e = g.edgeSet().size(), n = g.vertexSet().size();
         if(e>7*n){
@@ -317,7 +321,7 @@ public class Metrics {
         }
         else
         {
-            System.out.println("Cannot be calculated " + graph.getProjectName());
+            return -1;
         }
         return cnum;
     }
@@ -344,9 +348,7 @@ public class Metrics {
         return density(graph.getFunctionGraph());
     }
 
-    public void matrix() throws ExportException {
-//        OutputStream out = new PrintStream(System.out);
-//        String mat;
+    public static LinkedHashMap<String, double[]> matrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> receivedGraph) throws ExportException {
 
         OutputStream output = new OutputStream()
         {
@@ -361,18 +363,14 @@ public class Metrics {
                 return this.string.toString();
             }
         };
-//        MatrixExporter<String, DefaultWeightedEdge> matrixExporter = new MatrixExporter<String, DefaultWeightedEdge>();
-//        matrixExporter.setFormat(MatrixExporter.Format.SPARSE_ADJACENCY_MATRIX);
-//        //Uncomment of print the matrix or save the matrix
-//        System.out.println("printing matrix");
-//        matrixExporter.exportGraph(graph.getFileGraph(),out);
+
 
         CSVExporter csvExporter = new CSVExporter<String, DefaultWeightedEdge>();
         csvExporter.setParameter(CSVFormat.Parameter.MATRIX_FORMAT_ZERO_WHEN_NO_EDGE,true);
         csvExporter.setParameter(CSVFormat.Parameter.MATRIX_FORMAT_NODEID,true);
         csvExporter.setFormat(CSVFormat.MATRIX);
 
-        LinkedHashMap<String, double[]> hashMap = new LinkedHashMap<>();
+        LinkedHashMap<String, double[]> linkedHashMap = new LinkedHashMap<>();
         LinkedHashMap<String, TreeMap> matrixx = new LinkedHashMap<>();
 
         ComponentNameProvider<String> componentNameProvider = new ComponentNameProvider<String>() {
@@ -382,7 +380,7 @@ public class Metrics {
             }
         };
         csvExporter.setVertexIDProvider(componentNameProvider);
-        csvExporter.exportGraph(graph.getDirectoryGraph(),output);
+        csvExporter.exportGraph(receivedGraph, output);
 
         Scanner scanner = new Scanner(output.toString());
 
@@ -398,36 +396,13 @@ public class Metrics {
             }
             if(!vertex.equals(v[++l]))
                 System.out.println("ALARM! ALARM! ALARM! ALARM!");
-            hashMap.put(vertex, row);
+            linkedHashMap.put(vertex, row);
         }
 
-        double adMatrix[][] = new double[hashMap.size()][hashMap.size()];
-        l =0;
-        for(String s : hashMap.keySet()){
-            double []t = hashMap.get(s);
-            adMatrix[l++] = t;
-        }
+        if(linkedHashMap.size()==0)
+            return null;
+        return linkedHashMap;
 
-
-
-        RealMatrix realMatrix = MatrixUtils.createRealMatrix(adMatrix);
-        RealMatrix finalMatrix = MatrixUtils.createRealIdentityMatrix(realMatrix.getColumnDimension());
-        for(int i = 1; i<realMatrix.getColumnDimension()-1; i++) {
-            finalMatrix = finalMatrix.add(realMatrix.power(i));
-        }
-        System.out.println(finalMatrix);
-        double sum = 0;
-        double[][] f = finalMatrix.getData();
-        for(int i = 0; i< f.length;i++){
-            for(int j=0; j<f.length;j++){
-                if(f[i][j]!=0)
-                sum += 1;
-            }
-        }
-        if(f.length == 1)
-            System.out.println("The value of Propagation Cost is: " + 0);
-        else
-        System.out.println("The value of Propagation Cost is: " + sum/(f.length*f.length));
     }
 
 
@@ -500,4 +475,5 @@ public class Metrics {
         System.out.println("Average Instability: " + instability/graph.Ca.size());
         return instability;
     }
+
 }

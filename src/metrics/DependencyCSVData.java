@@ -1,6 +1,6 @@
-package fileIO;
+package metrics;
 
-public class CSVData {
+public class DependencyCSVData {
     private String file1;
     private String function1;
     private String file2;

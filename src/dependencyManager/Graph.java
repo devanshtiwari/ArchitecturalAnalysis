@@ -1,7 +1,7 @@
 package dependencyManager;
 
 
-import fileIO.CSVData;
+import metrics.DependencyCSVData;
 import guru.nidi.graphviz.attribute.Color;
 
 import guru.nidi.graphviz.attribute.Label;
@@ -26,7 +26,7 @@ public class Graph {
         return clusterHashMap;
     }
 
-    HashMap<String, Cluster> clusterHashMap = new HashMap();
+    private HashMap<String, Cluster> clusterHashMap = new HashMap();
 
     public HashMap<String, Double> Ce = new HashMap<>();
     public HashMap<String, Double> Ca = new HashMap<>();
@@ -36,7 +36,7 @@ public class Graph {
 
     private String projectName;
 
-    DirectedWeightedPseudograph<String, DefaultWeightedEdge> functionGraph = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class) {
+    private DirectedWeightedPseudograph<String, DefaultWeightedEdge> functionGraph = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class) {
         @Override
         public DefaultWeightedEdge addEdge(String sourceVertex, String targetVertex) {
             DefaultWeightedEdge edge = this.getEdge(sourceVertex, targetVertex);
@@ -51,11 +51,12 @@ public class Graph {
     //Main File and Function
     public String mainFile = "";
     public String mainFunc = "";
+    public String mainModule ="";
 
     //Number of Functions in File
     private Map<String, Integer> functionsInFile = new HashMap<>();
 
-    DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileGraph = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class) {
+    private DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileGraph = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class) {
         @Override
         public DefaultWeightedEdge addEdge(String sourceVertex, String targetVertex) {
             DefaultWeightedEdge edge = this.getEdge(sourceVertex, targetVertex);
@@ -71,7 +72,7 @@ public class Graph {
         return directoryGraph;
     }
 
-    DirectedWeightedPseudograph<String, DefaultWeightedEdge> directoryGraph = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class) {
+    private DirectedWeightedPseudograph<String, DefaultWeightedEdge> directoryGraph = new DirectedWeightedPseudograph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class) {
         @Override
         public DefaultWeightedEdge addEdge(String sourceVertex, String targetVertex) {
             DefaultWeightedEdge edge = this.getEdge(sourceVertex, targetVertex);
@@ -82,6 +83,8 @@ public class Graph {
             return super.addEdge(sourceVertex, targetVertex);
         }
     };
+
+
 
 
     public String getProjectName() {
@@ -100,52 +103,84 @@ public class Graph {
         return functionGraph;
     }
 
-    public Graph(List<CSVData> csvDataList, String projectName, Boolean generateGraph) {
+    public Graph( String projectName) {
         this.projectName = projectName;
-        mapToGraph(csvDataList);
+    }
+
+
+
+    public void setDependencyCSVData(List<DependencyCSVData> dependencyCsvDataList, Boolean generateGraph){
+        mapToGraph(dependencyCsvDataList);
         if (generateGraph == TRUE)
             generateGraph();
     }
+    public void setFunctionCSVData(){
 
-    private void mapToGraph(List<CSVData> csvDataList) {
+    }
+    public void setFileInfoCSVData(){
+
+    }
+    public void setHeaderIncludeInfoCSVData(){
+
+    }
+
+
+    private void mapToGraph(List<DependencyCSVData> dependencyCsvDataList) {
 
 
         Set<String> functionsSet = new HashSet<>();
         Set<String> callerSet = new HashSet<>();
         Set<String> calleeSet = new HashSet<>();
 
-        for (CSVData csvData : csvDataList) {
-            String fileV1 = csvData.getFile1();
-            String fileV2 = csvData.getFile2();
+        for (DependencyCSVData dependencyCsvData : dependencyCsvDataList) {
+            String fileV1 = dependencyCsvData.getFile1();
+            String fileV2 = dependencyCsvData.getFile2();
 
             if(fileV1.contains("example") || fileV1.contains("test") || fileV1.contains("demo"))
                 continue;
-            String funcV1 = csvData.getFile1() + "/" + csvData.getFunction1();
-            String funcV2 = csvData.getFile2() + "/" + csvData.getFunction2();
+            String funcV1 = dependencyCsvData.getFile1() + "/" + dependencyCsvData.getFunction1();
+            String funcV2 = dependencyCsvData.getFile2() + "/" + dependencyCsvData.getFunction2();
 
             callerSet.add(fileV1);
             calleeSet.add(fileV2);
 
-            if (csvData.getFile1().endsWith("main.c") && csvData.getFunction1().equals("main")) {
+            if (dependencyCsvData.getFile1().endsWith("main.c") && dependencyCsvData.getFunction1().equals("main")) {
                 if (!mainFunc.equals(funcV1))
                     System.out.println("Main Encountered: " + funcV1);
                 mainFunc = funcV1;
-                mainFile = csvData.getFile1();
-            } else if (csvData.getFile2().endsWith("main.c") && csvData.getFunction1().endsWith("main")) {
+                mainFile = dependencyCsvData.getFile1();
+                if (dependencyCsvData.getFile1().lastIndexOf("/")>=0)
+                    mainModule = dependencyCsvData.getFile1().substring(0, dependencyCsvData.getFile1().lastIndexOf("/"));
+                else
+                    mainModule = "Root/" + projectName;
+                } else if (dependencyCsvData.getFile2().endsWith("main.c") && dependencyCsvData.getFunction1().endsWith("main")) {
                 if (!mainFunc.equals(funcV1))
                     System.out.println("Main Encountered: " + funcV1);
                 mainFunc = funcV2;
-                mainFile = csvData.getFile2();
-            } else if (mainFile.equals("") && csvData.getFunction1().equals("main")) {
+                mainFile = dependencyCsvData.getFile2();
+                if (dependencyCsvData.getFile2().lastIndexOf("/")>=0)
+                    mainModule = dependencyCsvData.getFile2().substring(0, dependencyCsvData.getFile2().lastIndexOf("/"));
+                else
+                    mainModule = "Root/" + projectName;
+            } else if (mainFile.equals("") && dependencyCsvData.getFunction1().equals("main")) {
                 if (!mainFunc.equals(funcV1))
                     System.out.println("Main Encountered: " + funcV1);
                 mainFunc = funcV1;
-                mainFile = csvData.getFile1();
-            } else if (mainFile.equals("") && csvData.getFunction1().endsWith("main")) {
+                mainFile = dependencyCsvData.getFile1();
+                if (dependencyCsvData.getFile1().lastIndexOf("/")>=0)
+                    mainModule = dependencyCsvData.getFile1().substring(0, dependencyCsvData.getFile1().lastIndexOf("/"));
+                else
+                    mainModule = "Root/" + projectName;
+            } else if (mainFile.equals("") && dependencyCsvData.getFunction1().endsWith("main")) {
                 if (!mainFunc.equals(funcV1))
                     System.out.println("Main Encountered: " + funcV1);
                 mainFunc = funcV1;
-                mainFile = csvData.getFile1();
+                mainFile = dependencyCsvData.getFile1();
+                if (dependencyCsvData.getFile1().lastIndexOf("/")>=0)
+                    mainModule = dependencyCsvData.getFile1().substring(0, dependencyCsvData.getFile1().lastIndexOf("/"));
+                else
+                    mainModule = "Root/" + projectName;
+
             }
 
             if (!functionsSet.contains(funcV1)) {
