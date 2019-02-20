@@ -31,7 +31,7 @@ public class MetricsApp {
 
     public static void main(String[] args) throws Exception {
 
-        CSVWriter csvWriter = new CSVWriter(new File("/Users/devan/Desktop/Architectural Refactoring Project/Documents from Company/projects/csv/myCSVNew"));
+//        CSVWriter csvWriter = new CSVWriter(new File("/Users/devan/Desktop/Architectural Refactoring Project/Documents from Company/projects/csv/myCSVNew"));
 //        File dir = new File("/Users/devan/Desktop/Architectural Refactoring Project/Documents from Company/projects/csv/");
         File dir = new File("/Users/devan/Documents/ArchitecturalAnalysis/CSV");
         List<MetricsPOJO> metricsPOJOS = new ArrayList<>();
@@ -46,7 +46,12 @@ public class MetricsApp {
 
         wholeProjectCSV.add(MetricsContainer.getHeader());
 
+        int count = 0;
+        int total = allCSVFiles.keySet().size();
+        double countLib = 0;
         for (String projectName : allCSVFiles.keySet()) {
+            System.out.println(++count + "/" + total);
+            long start = System.currentTimeMillis();
             DataOrganiser dataOrganiser = new DataOrganiser();
             dataOrganiser.delegate(projectName,allCSVFiles.get(projectName));
             MetricsInputContent metricsInputContent = dataOrganiser.getMetricsInputContent();
@@ -54,6 +59,8 @@ public class MetricsApp {
             MetricsContainer metricsContainer  = new MetricsContainer(metricsInputContent);
 
             metricsContainer.calculateStats();
+            if(metricsContainer.isLib > 0)
+                countLib++;
             wholeProjectCSV.add(metricsContainer.getRow());
             nodeModuleCSV = metricsContainer.getModuleNodeMetricsCSV();
             nodeFileCSV = metricsContainer.getFileNodeMetricsCSV();
@@ -64,6 +71,8 @@ public class MetricsApp {
             csvWriter1.writez(nodeFileCSV);
             csvWriter1.setFile("FunctionNode", projectName);
             csvWriter1.writez(nodeFunctionCSV);
+
+            System.out.println((start-System.currentTimeMillis())/1000D + " Seconds.");
 
             //            //        FileReader csvReader = new FileReader("/Users/devan/Documents/ArchitecturalAnalysis/Output Good/bzip2.csv",true);
 //            CSVReader csvReader = new CSVReader(f.getAbsolutePath(),true);
@@ -118,6 +127,7 @@ public class MetricsApp {
 //            metrics.avgClusterDensity();
         }
 
+        System.out.println("Hit Percentage: " + (countLib/(double)total));
         csvWriter1.setFile("AllProjects");
         csvWriter1.writez(wholeProjectCSV);
 

@@ -146,7 +146,7 @@ public class MetricsContainer {
     }
 
 
-    public void calculateStats() throws ExportException {
+    public void calculateStats() throws Exception {
 
         initializeSubs();
 
@@ -184,6 +184,8 @@ public class MetricsContainer {
 
         cycles();
 
+        findLibraries();
+
     }
 
     private void initializeSubs(){
@@ -206,9 +208,8 @@ public class MetricsContainer {
         }
     }
 
-
     private void projectBasicStats() {
-        int maxFunctions = 0;;
+        int maxFunctions = 0;
 
         int functionSum = 0, parameterSum = 0;
         int parameterSumGraph = 0;
@@ -230,7 +231,7 @@ public class MetricsContainer {
                     moduleFileMaxSize = fileBasedMetrics.get(file).numOfFunctions;
 
                 for(String function : functions){
-                    if(metricsInputContent.getGraph().getFunctionGraph().vertexSet().contains(file + "/" + function)) {
+                    if(metricsInputContent.getGraph()!=null && metricsInputContent.getGraph().getFunctionGraph().vertexSet().contains(file + "/" + function)) {
                         fileSizeGraph++;
                         numOfFunctionsGraph++;
                         functionBasedMetrics.get(file + "/" + function).numOfParametersGraph = metricsInputContent.getFunctionCSVInfoArrayList().get(file + "/" + function).getCount();
@@ -239,7 +240,7 @@ public class MetricsContainer {
                     functionBasedMetrics.get(file + "/" + function).numOfParameters = metricsInputContent.getFunctionCSVInfoArrayList().get(file + "/" + function).getCount();
                     pSumOfFunctionsinFile += functionBasedMetrics.get(file + "/" + function).numOfParameters;
                 }
-                if(metricsInputContent.getGraph().getFileGraph().vertexSet().contains(file)) {
+                if(metricsInputContent.getGraph()!=null && metricsInputContent.getGraph().getFileGraph().vertexSet().contains(file)) {
                     fileBasedMetrics.get(file).numOfFunctionsGraph = numOfFunctionsGraph;
                     moduleWiseFunctionsGraph += fileBasedMetrics.get(file).numOfFunctionsGraph;
                     if(moduleFileMaxSizeGraph < fileBasedMetrics.get(file).numOfFunctionsGraph)
@@ -253,7 +254,10 @@ public class MetricsContainer {
                     parameterSumGraph += pSumOfFunctionsinFileGraph;
                 }
 
-                fileBasedMetrics.get(file).avgParameters = pSumOfFunctionsinFile/functions.size();
+                if(functions.size() == 0)
+                    fileBasedMetrics.get(file).avgParameters = -20;
+                else
+                    fileBasedMetrics.get(file).avgParameters = pSumOfFunctionsinFile/functions.size();
                 pSumInModule += pSumOfFunctionsinFile;
                 parameterSum += pSumOfFunctionsinFile;
             }
@@ -263,10 +267,10 @@ public class MetricsContainer {
             moduleBasedMetrics.get(module).fileMaxSize = moduleFileMaxSize;
             moduleBasedMetrics.get(module).moduleName = module;
             moduleBasedMetrics.get(module).numOfFiles = files.size();
-            moduleBasedMetrics.get(module).avgFileSize = moduleWiseFunctions/files.size();
+            moduleBasedMetrics.get(module).avgFileSize = (double) moduleWiseFunctions/(double) files.size();
             moduleBasedMetrics.get(module).numOfFunctions = moduleWiseFunctions;
             moduleBasedMetrics.get(module).avgParameters = pSumInModule/moduleWiseFunctions;
-            if(metricsInputContent.getGraph().getDirectoryGraph().vertexSet().contains(module)){
+            if(metricsInputContent.getGraph()!=null && metricsInputContent.getGraph().getDirectoryGraph().vertexSet().contains(module)){
                 moduleBasedMetrics.get(module).fileMaxSizeGraph = moduleFileMaxSizeGraph;
                 moduleBasedMetrics.get(module).numOfFilesGraph = fileSizeGraph;
                 moduleBasedMetrics.get(module).avgFileSizeGraph = (double) moduleWiseFunctionsGraph/ (double) fileSizeGraph;
@@ -276,27 +280,36 @@ public class MetricsContainer {
         }
 
         this.numOfFunctions = functionSum;
-        this.numOfFunctionsGraph = metricsInputContent.getGraph().getFunctionGraph().vertexSet().size();
+        if(metricsInputContent.getGraph()!=null)
+            this.numOfFunctionsGraph = metricsInputContent.getGraph().getFunctionGraph().vertexSet().size();
         this.numOfFiles = metricsInputContent.getFiletoFunctionMap().size();
-        this.numOfFilesGraph =metricsInputContent.getGraph().getFileGraph().vertexSet().size();
+        if(metricsInputContent.getGraph()!=null)
+            this.numOfFilesGraph =metricsInputContent.getGraph().getFileGraph().vertexSet().size();
 
-        this.avgFileSize = functionSum/this.numOfFiles;
-        this.avgFileSizeGraph = (double) this.numOfFunctionsGraph/(double) this.numOfFilesGraph;
+        if(this.numOfFiles != 0)
+            this.avgFileSize = (double) functionSum / (double) this.numOfFiles;
+        if(this.numOfFilesGraph != 0)
+            this.avgFileSizeGraph = (double) this.numOfFunctionsGraph / (double) this.numOfFilesGraph;
 
         int max = 0;
-        for (String key : metricsInputContent.getGraph().getFunctionsInFile().keySet()) {
-            if (max < metricsInputContent.getGraph().getFunctionsInFile().get(key))
-                max = metricsInputContent.getGraph().getFunctionsInFile().get(key);
+        if(metricsInputContent.getGraph()!=null) {
+            for (String key : metricsInputContent.getGraph().getFunctionsInFile().keySet()) {
+                if (max < metricsInputContent.getGraph().getFunctionsInFile().get(key))
+                    max = metricsInputContent.getGraph().getFunctionsInFile().get(key);
+            }
         }
         this.fileMaxSizeGraph = max;
         this.fileMaxSize = maxFunctions;
-        this.avgParameterSize = parameterSum/this.numOfFunctions;
+        if(this.numOfFunctions != 0)
+            this.avgParameterSize = (double) parameterSum/(double) this.numOfFunctions;
 
-        this.avgParameterSizeGraph = parameterSumGraph/this.numOfFunctionsGraph;
-        this.numOfModulesGraph = metricsInputContent.getGraph().getDirectoryGraph().vertexSet().size();
+        if(this.numOfFunctionsGraph!=0)
+            this.avgParameterSizeGraph = (double) parameterSumGraph/(double) this.numOfFunctionsGraph;
+        if(metricsInputContent.getGraph()!=null)
+            this.numOfModulesGraph = metricsInputContent.getGraph().getDirectoryGraph().vertexSet().size();
+
         this.numOfModules = metricsInputContent.getModuletoFileMap().size();
     }
-
 
     private void sizeDeviation() {
         double deviation = 0;
@@ -316,24 +329,32 @@ public class MetricsContainer {
                 moduleD += Math.abs(fileBasedMetrics.get(file).numOfFunctions - modulemMu);
                 D += Math.abs(fileBasedMetrics.get(file).numOfFunctions - this.avgFileSize);
             }
-            moduleDeviation = 1.0 - moduleD / (modulemMu * moduleBasedMetrics.get(module).numOfFunctions);
-            moduleBasedMetrics.get(module).fileSizeDeviation = moduleDeviation;
-            if(metricsInputContent.getGraph().getDirectoryGraph().vertexSet().contains(module)){
+            if(moduleBasedMetrics.get(module).numOfFunctions != 0) {
+                moduleDeviation = 1.0 - moduleD / (modulemMu * moduleBasedMetrics.get(module).numOfFunctions);
+                moduleBasedMetrics.get(module).fileSizeDeviation = moduleDeviation;
+            }
+            if(metricsInputContent.getGraph().getDirectoryGraph().vertexSet().contains(module) && moduleBasedMetrics.get(module).numOfFunctionsGraph != 0){
                 moduleBasedMetrics.get(module).fileSizeDeviationGraph = 1.0 - moduleDgraph / (moduleMuGraph * moduleBasedMetrics.get(module).numOfFunctionsGraph);
             }
         }
 
-        System.out.println(D);
-        deviation = 1.0 - D / (mu * this.numOfFunctions);
-        System.out.println("File Size Deviation: " + deviation);
-        this.fileSizeDeviation = deviation;
-        this.fileSizeDeviationGraph = 1.0 - Dgraph / (muGraph * this.numOfFunctionsGraph);
+//        System.out.println(D);
+        if(this.numOfFunctions != 0) {
+            deviation = 1.0 - D / (mu * this.numOfFunctions);
+//        System.out.println("File Size Deviation: " + deviation);
+            this.fileSizeDeviation = deviation;
+        }
+        if(this.numOfFunctionsGraph != 0)
+            this.fileSizeDeviationGraph = 1.0 - Dgraph / (muGraph * (double) this.numOfFunctionsGraph);
     }
 
     private void dependencyConc() {
         double dep = 0.0;
+        if(metricsInputContent.getGraph()== null)
+            return;
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
+
         double filesumInOut = 0.0, funcsumInOut = 0.0;
 
         for (String v : fileG.vertexSet()) {
@@ -344,9 +365,9 @@ public class MetricsContainer {
             double[] inout = inoutDegree(funcG, v);
             funcsumInOut += inout[0] * inout[0];
         }
-        dep = 1.0 - (numOfFiles * filesumInOut) / (numOfFunctions * funcsumInOut);
+        dep = 1.0 - ((double) numOfFiles * filesumInOut) / ((double) numOfFunctions * funcsumInOut);
 
-        System.out.println("Incoming concentration: " + dep);
+//        System.out.println("Incoming concentration: " + dep);
         this.dependencyConc = dep;
     }
 
@@ -354,6 +375,13 @@ public class MetricsContainer {
 
         double numeratorfile = 0, numeratorfunc = 0, numeratormodule = 0;
         int numberOfFiles = 0, numberOfFunctions = 0, numberOfModules = 0;
+        if(metricsInputContent.getGraph() == null) {
+            this.fileCallComplexity = -17;
+            this.functionCallComplexity = -17;
+            this.moduleCallComplexity = -17;
+            return;
+        }
+
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
@@ -376,15 +404,25 @@ public class MetricsContainer {
             numberOfModules++;
         }
 
-        this.fileCallComplexity = numeratorfile / ((numberOfFiles - 1) * (numberOfFiles - 1));
-        this.functionCallComplexity = numeratorfunc / ((numberOfFunctions - 1) * (numberOfFunctions - 1));
-        this.moduleCallComplexity = numeratormodule / ((numberOfModules - 1) * (numberOfModules - 1));
+        if(numberOfFiles == 0 || numberOfFiles == 1)
+            this.fileCallComplexity = -18;
+        else
+            this.fileCallComplexity = numeratorfile / (((double)numberOfFiles - 1D) * ((double)numberOfFiles - 1D));
+        if(numberOfFunctions == 0 || numberOfFunctions == 1)
+            this.functionCallComplexity = -18;
+        else
+            this.functionCallComplexity = numeratorfunc / (((double) numberOfFunctions - 1D) * ((double) numberOfFunctions - 1D));
+        if(numberOfModules == 0 || numberOfModules == 1)
+            this.moduleCallComplexity = -18;
+        else
+            this.moduleCallComplexity =  numeratormodule / ((double) numberOfModules - 1D) * ((double) numberOfModules - 1D);
 
-        System.out.println("Call Complexity: " );
     }
 
     void inOutDegrees(){
 
+        if(metricsInputContent.getGraph()== null)
+            return;
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
@@ -416,6 +454,12 @@ public class MetricsContainer {
     }
 
     void dependencies(){
+        if(metricsInputContent.getGraph() == null) {
+            this.fileDependencies = -17;
+            this.functionDependencies = -17;
+            this.moduleDependencies = -17;
+            return;
+        }
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
@@ -424,32 +468,52 @@ public class MetricsContainer {
         for (DefaultWeightedEdge e : fileG.edgeSet()) {
             w += fileG.getEdgeWeight(e);
         }
-        this.fileDependencies = w / (fileG.vertexSet().size() * fileG.vertexSet().size());
+        if(fileG.vertexSet().size() != 0)
+            this.fileDependencies = w / (double) (fileG.vertexSet().size() * fileG.vertexSet().size());
+        else
+            this.fileDependencies = -19;
 
         w = 0;
         for (DefaultWeightedEdge e : funcG.edgeSet()) {
             w += funcG.getEdgeWeight(e);
         }
-        this.functionDependencies = w / (funcG.vertexSet().size() * funcG.vertexSet().size());
+        if(funcG.vertexSet().size() != 0)
+            this.functionDependencies = w / (double) (funcG.vertexSet().size() * funcG.vertexSet().size());
+        else
+            this.functionDependencies = -19;
 
         w = 0;
         for (DefaultWeightedEdge e : moduleG.edgeSet()) {
             w += moduleG.getEdgeWeight(e);
         }
-        this.moduleDependencies = w / (moduleG.vertexSet().size() * moduleG.vertexSet().size());
+        if(moduleG.vertexSet().size() != 0)
+            this.moduleDependencies = w / (double) (moduleG.vertexSet().size() * moduleG.vertexSet().size());
+        else
+            this.moduleDependencies = -19;
     }
 
     void density(){
+        if(metricsInputContent.getGraph()== null)
+            return;
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
 
-        this.moduleDensity = (double)moduleG.edgeSet().size()/(double)(moduleG.vertexSet().size()*(moduleG.vertexSet().size()-1));
-        this.fileDensity = (double)fileG.edgeSet().size()/(double)(fileG.vertexSet().size()*(fileG.vertexSet().size()-1));
-        this.functionDensity = (double)funcG.edgeSet().size()/(double)(funcG.vertexSet().size()*(funcG.vertexSet().size()-1));
+        if(moduleG.vertexSet().size() != 0 && moduleG.vertexSet().size() != 1)
+            this.moduleDensity = (double)moduleG.edgeSet().size()/(double)(moduleG.vertexSet().size()*(moduleG.vertexSet().size()-1));
+        if(fileG.vertexSet().size() != 0 && fileG.vertexSet().size() != 1)
+            this.fileDensity = (double)fileG.edgeSet().size()/(double)(fileG.vertexSet().size()*(fileG.vertexSet().size()-1));
+        if(funcG.vertexSet().size() != 0 && funcG.vertexSet().size() != 1)
+            this.functionDensity = (double)funcG.edgeSet().size()/(double)(funcG.vertexSet().size()*(funcG.vertexSet().size()-1));
     }
 
     void cuttingNumber(){
+        if(metricsInputContent.getGraph() == null) {
+            this.fileCuttingNumber = -17;
+            this.functionCuttingNumber = -17;
+            this.moduleCuttingNumber = -17;
+            return;
+        }
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
@@ -472,6 +536,11 @@ public class MetricsContainer {
     }
 
     void QValue(){
+        if(metricsInputContent.getGraph()==null) {
+            this.qValue = -17;
+            return;
+        }
+
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
 
@@ -481,46 +550,74 @@ public class MetricsContainer {
             n += 2 * moduleG.getEdgeWeight(e);
         }
         for(String module : moduleG.vertexSet()){
+            if(moduleBasedMetrics.get(module) == null)
+                continue;
             double ai = 0, eii=0;
             if(moduleG.getEdge(module,module) !=null)
                 eii = 2* moduleG.getEdgeWeight(moduleG.getEdge(module,module));
-            ai = moduleBasedMetrics.get(module).outDegree + (eii/2);
-            Qval += (eii/n - (ai/n)*(ai/n));
+            if(moduleBasedMetrics.get(module) == null)
+                return;
+            if(moduleBasedMetrics == null)
+                System.out.println();
+            ai = moduleBasedMetrics.get(module).outDegree + (eii/2D);
+            Qval += eii/n - (ai/n)*(ai/n);
         }
         this.qValue = Qval;
     }
 
     void avgModuleDensity(){
+        if(metricsInputContent.getGraph()==null) {
+            this.avgModuleDensity = -17;
+            return;
+        }
         HashMap<String, Cluster> clusterMap = metricsInputContent.getGraph().getClusterHashMap(); //Based on graph
         HashMap<String, HashSet<String>> map = metricsInputContent.getModuletoFileMap(); //Based on structure,
 
         double avg = 0;
         double denominator = 0;
         for(String str:clusterMap.keySet()){
-            double dens = clusterMap.get(str).getEdges()/((clusterMap.get(str).getNodes()+1.0)*(clusterMap.get(str).getNodes()));
+            double dens = clusterMap.get(str).getEdges() / ((clusterMap.get(str).getNodes()+1.0)*(clusterMap.get(str).getNodes()));
             avg += dens * clusterMap.get(str).getNodes();
             denominator += clusterMap.get(str).getNodes();
         }
 
-        avg /=  denominator;
-        this.avgModuleDensity = avg;
+        if(denominator != 0) {
+            avg /= denominator;
+            this.avgModuleDensity = avg;
+        }
+
     }
 
     void instability(){
         double sumInstability = 0D;
-        DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
+        if(metricsInputContent.getGraph() == null){
+            this.avgInstability = -17;
+            return;
+        }
 
         //TODO Ca.size is module size -> no, Ca.size is based on graph, whereas module is based on structure..
         for(String module : metricsInputContent.getGraph().Ce.keySet()){
+
             double hold = sumInstability;
+            if(metricsInputContent.getGraph().Ca.get(module) == null || moduleBasedMetrics.get(module) == null)
+                continue;
             if(!(metricsInputContent.getGraph().Ce.get(module) + metricsInputContent.getGraph().Ce.get(module) == 0))
                 sumInstability += metricsInputContent.getGraph().Ce.get(module)/(metricsInputContent.getGraph().Ca.get(module) + metricsInputContent.getGraph().Ce.get(module));
             moduleBasedMetrics.get(module).instability = sumInstability - hold;
         }
-        this.avgInstability = sumInstability / metricsInputContent.getGraph().Ca.size();
+        if(metricsInputContent.getGraph() != null && metricsInputContent.getGraph().Ca.size() != 0)
+            this.avgInstability = sumInstability / (double) metricsInputContent.getGraph().Ca.size();
+        else
+            this.avgInstability = -11;
     }
 
-    void fanInfantOutVisibility() throws ExportException {
+    void fanInfantOutVisibility() throws Exception {
+        if(metricsInputContent.getGraph() == null) {
+            this.filePropagationCost = -17;
+            this.functionPropagationCost = -17;
+            this.modulePropagationCost = -17;
+            return;
+        }
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
@@ -538,14 +635,11 @@ public class MetricsContainer {
         double propagationCost = 0;
         propagationCost = calculateFanInFanOut(fileG, fileBasedMetrics, fileFinalMatrix);
         this.filePropagationCost = propagationCost;
-        propagationCost = 0;
-//      propagationSum = calculateFanInFanOut(funcG, functionBasedMetrics, funcFinalMatrix);
-        this.functionPropagationCost = propagationCost;
-        propagationCost = 0;
-        if(moduleFinalMatrix != null) {
-            propagationCost = calculateFanInFanOut(moduleG, moduleBasedMetrics, moduleFinalMatrix);
-            this.modulePropagationCost = propagationCost;
-        }
+//        propagationCost = calculateFanInFanOut(funcG, functionBasedMetrics, funcFinalMatrix);
+//        this.functionPropagationCost = propagationCost;
+        propagationCost = calculateFanInFanOut(moduleG, moduleBasedMetrics, moduleFinalMatrix);
+        this.modulePropagationCost = propagationCost;
+
 
 //        double adMatrix[][] = new double[fileLinkedHashMapMatrix.size()][fileLinkedHashMapMatrix.size()];
 //        int l = 0;
@@ -587,6 +681,8 @@ public class MetricsContainer {
 
         assert linkedHashMapMatrix != null;
 
+        if(linkedHashMapMatrix == null)
+            return -20;
         double [] columnWise = new double[linkedHashMapMatrix.size()];
         int k = 0;
         int sum1 = 0, sum2 = 0;
@@ -597,27 +693,26 @@ public class MetricsContainer {
             double [] row = linkedHashMapMatrix.get(file);
             double rowWise = 0;
             for(int i = 0; i < row.length; i++){
-                rowWise += row[i];
-                columnWise[i] += row[i];
+                rowWise += (row[i] != 0)? 1 : 0;
+                columnWise[i] += (row[i] != 0)? 1 : 0;;
             }
 
-            ((MetricsClass)hashMap.get(file)).fanInVisibility = rowWise / row.length;
+            ((MetricsClass)hashMap.get(file)).fanInVisibility =  rowWise / (double) row.length;
             sum1 += rowWise;
         }
         k = 0;
         for(String file : linkedHashMapMatrix.keySet()){
             if(hashMap.get(file) != null) {
-                ((MetricsClass)hashMap.get(file)).fanOutVisibility = columnWise[k]/columnWise.length;
+                ((MetricsClass)hashMap.get(file)).fanOutVisibility = columnWise[k] / (double) columnWise.length;
             }
             sum2 += columnWise[k];
-
             k++;
         }
 
-        return  ((double)sum1/(double)columnWise.length);
+        return  ((double)sum1 / (double)(columnWise.length * columnWise.length));
     }
 
-    HashMap<String, double[]> getFinalMatrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g) throws ExportException {
+    HashMap<String, double[]> getFinalMatrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g) throws Exception {
         LinkedHashMap<String, double[]> fileLinkedHashMapMatrix = Metrics.matrix(g);
         if(fileLinkedHashMapMatrix == null)
             return null;
@@ -652,58 +747,87 @@ public class MetricsContainer {
                  else if(file.endsWith(".h"))
                      hFiles++;
              }
-             moduleBasedMetrics.get(module).abstraction = hFiles/cFiles; //TODO THis can be improved. header files only called by files inside.
+             if(cFiles != 0)
+                moduleBasedMetrics.get(module).abstraction = hFiles / cFiles; //TODO THis can be improved. header files only called by files inside.
+             else
+                 moduleBasedMetrics.get(module).abstraction = -16;
          }
     }
 
     void distance(){
         for(String module : metricsInputContent.getModuletoFileMap().keySet()){
-            if(moduleBasedMetrics.get(module) != null)
+            if(moduleBasedMetrics.get(module) != null && moduleBasedMetrics.get(module).abstraction >= 0 && moduleBasedMetrics.get(module).instability >= 0)
                 moduleBasedMetrics.get(module).distance = Math.abs(moduleBasedMetrics.get(module).abstraction + moduleBasedMetrics.get(module).instability -1);
+            else
+                moduleBasedMetrics.get(module).distance = -15;
         }
     }
 
     void externalFunctionUsage(){
+        if(metricsInputContent.getGraph() == null)
+            return;
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFileGraph();
         for(String module : metricsInputContent.getModuletoFileMap().keySet()){
             HashSet<String> files = metricsInputContent.getModuletoFileMap().get(module);
             for(String file : files){
                 if(fileBasedMetrics.get(file) != null && funcG.containsVertex(file))
                     fileBasedMetrics.get(file).externalFunctionsCalled = funcG.outDegreeOf(file);
+                else
+                    fileBasedMetrics.get(file).externalFunctionsCalled = -14;
             }
         }
     }
 
     void dependentModules(){
+        if(metricsInputContent.getGraph() == null)
+            return;
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
         for(String module : metricsInputContent.getModuletoFileMap().keySet()){
             if(moduleBasedMetrics.get(module) != null && moduleG.containsVertex(module))
                 moduleBasedMetrics.get(module).dependentModules = moduleG.outDegreeOf(module); //TODO CONFIRM!!!!!!!!!
+            else{
+                moduleBasedMetrics.get(module).dependentModules = -13;
+            }
         }
     }
 
     void cycles(){
+        if(metricsInputContent.getGraph() == null)
+            return;
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
 
-        if(cyclesinGraph(fileG, metricsInputContent.getGraph().mainFile)!=-1) {
+        if(cyclesinGraph(fileG, metricsInputContent.getGraph().mainFile) != -1) {
             this.fileCycles = cycleAllEdges.size();
             this.fileCyclesMin = cycleMinEdges.size();
         }
+        else {
+            this.fileCycles = -12;
+            this.fileCyclesMin = -12;
+        }
         this.fileConnectedSets = connectedSets(fileG);
-        cyclesinGraph(funcG, metricsInputContent.getGraph().mainFunc);
-        this.functionCycles = cycleAllEdges.size();
-        this.functionCyclesMin = cycleMinEdges.size();
+        if(cyclesinGraph(funcG, metricsInputContent.getGraph().mainFunc) != -1) {
+            this.functionCycles = cycleAllEdges.size();
+            this.functionCyclesMin = cycleMinEdges.size();
+        }
+        else{
+            this.functionCycles = -12;
+            this.functionCyclesMin = -12;
+        }
         this.functionConnectedSets = connectedSets(funcG);
-        cyclesinGraph(moduleG, metricsInputContent.getGraph().mainModule);
-        this.moduleCycles = cycleAllEdges.size();
-        this.moduleCyclesMin = cycleMinEdges.size();
+        if(cyclesinGraph(moduleG, metricsInputContent.getGraph().mainModule) != -1){
+            this.moduleCycles = cycleAllEdges.size();
+            this.moduleCyclesMin = cycleMinEdges.size();
+        }
+        else{
+            this.moduleCycles = -12;
+            this.moduleCyclesMin = -12;
+        }
         this.moduleConnectedSets = connectedSets(moduleG);
     }
 
     int cyclesinGraph(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g, String mainV){
-
 
         globalPathFindergraph = null; cycleAllEdges.clear(); cycleMinEdges.clear();
         if(!g.containsVertex(mainV))
@@ -711,7 +835,7 @@ public class MetricsContainer {
         ArrayList pathSoFar = new ArrayList<String>();
         if(mainV.isEmpty()) {
             mainV = g.vertexSet().iterator().next();
-            System.out.println("wow");
+//            System.out.println("wow");
         }
         pathSoFar.add(mainV);
         globalPathFindergraph = (DirectedWeightedPseudograph<String, DefaultWeightedEdge>) g.clone();
@@ -760,7 +884,7 @@ public class MetricsContainer {
 
     int connectedSets(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g) {
         BiconnectivityInspector con = new BiconnectivityInspector(g);
-        System.out.println("\nConnected Sets: " + con.getConnectedComponents());
+//        System.out.println("\nConnected Sets: " + con.getConnectedComponents());
         Iterator itr = con.getConnectedComponents().iterator();
         int countSingletons = 0;
         while (itr.hasNext()) {
@@ -768,8 +892,8 @@ public class MetricsContainer {
             if (subGraphs.vertexSet().size() == 1)
                 countSingletons++;
         }
-        System.out.println("Singletons: " + countSingletons);
-        System.out.println("Rest: " + (con.getConnectedComponents().size() - countSingletons));
+//        System.out.println("Singletons: " + countSingletons);
+//        System.out.println("Rest: " + (con.getConnectedComponents().size() - countSingletons));
         return (con.getConnectedComponents().size() - countSingletons);
 
         //This thing is not that much.
@@ -782,6 +906,63 @@ public class MetricsContainer {
 //        }
 //
 //    }
+    }
+
+    public class MapUtil {
+        public <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+            List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+            list.sort(Map.Entry.comparingByValue());
+
+            Map<K, V> result = new LinkedHashMap<>();
+            for (Map.Entry<K, V> entry : list) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+            return result;
+        }
+    }
+
+
+    public int isLib = 0;
+    void findLibraries(){
+        List<String> topCalled = new ArrayList<>();
+        List<String> topCaller = new ArrayList<>();
+        LinkedHashMap<String, Integer> inDegrees = new LinkedHashMap<>();
+        LinkedHashMap<String, Integer> outDegrees = new LinkedHashMap<>();
+        DirectedWeightedPseudograph<String, DefaultWeightedEdge> fileG = metricsInputContent.getGraph().getFileGraph();
+        for(String v : fileG.vertexSet()){
+//            double[] inout = inoutDegree(fileG,v);
+            inDegrees.put(v,fileG.inDegreeOf(v));
+            outDegrees.put(v, fileG.outDegreeOf(v));
+        }
+        MapUtil mapUtil = new MapUtil();
+        LinkedHashMap<String, Integer> insorted =(LinkedHashMap<String, Integer>) mapUtil.sortByValue(inDegrees);
+        LinkedHashMap<String, Integer> outsorted =(LinkedHashMap<String, Integer>) mapUtil.sortByValue(outDegrees);
+        List<String> reverseOrderedKeysIn = new ArrayList<>(insorted.keySet());
+        List<String> reverseOrderedKeysOut = new ArrayList<>(outsorted.keySet());
+        Collections.reverse(reverseOrderedKeysIn);
+        Collections.reverse(reverseOrderedKeysOut);
+
+        int totalEdges = fileG.edgeSet().size();
+        System.out.println("Top Called (Libraries): ");
+        int max = 3, counter = 0;
+        for (String key : reverseOrderedKeysIn) {
+            counter++;
+            System.out.println(key + ": " + (double)insorted.get(key)/totalEdges +"; ");
+            if(key.contains("lib"))
+                isLib++;
+            topCalled.add(key);
+            if(counter == max)
+                break;
+        }
+        counter = 0;
+        System.out.println("Top Callers (Dependents): ");
+        for (String key : reverseOrderedKeysOut) {
+            counter ++;
+            topCaller.add(key);
+            System.out.println(key + ": " + (double) outsorted.get(key)/totalEdges +"; ");
+            if(counter == max)
+                break;
+        }
     }
 
 }

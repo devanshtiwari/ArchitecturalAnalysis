@@ -13,12 +13,16 @@ public class FunctionBasedMetric extends MetricsClass {
     int numOfParametersGraph = -1;
 
     public List<String> getRow(){
-        return Arrays.asList(fileName, functionName, Integer.toString(numOfParameters), Integer.toString(numOfParametersGraph));
+        return Arrays.asList(fileName, functionName, Double.toString(inDegree), Double.toString(outDegree),
+                Double.toString(fanInVisibility), Double.toString(fanOutVisibility),
+                Integer.toString(numOfParameters), Integer.toString(numOfParametersGraph));
 
     }
 
     static List<String> getHeader(){
-        return Arrays.asList("File Name", "Function Name", "Number of Parameters", "Number of Parameters(Graph)");
+        return Arrays.asList("File Name", "Function Name", "In Degrees", "OutDegrees",
+                "Fan In Visibility", "Fan Out Visibility",
+                "Number of Parameters", "Number of Parameters(Graph)");
     }
 
 }

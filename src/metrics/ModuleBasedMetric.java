@@ -30,7 +30,8 @@ public class ModuleBasedMetric extends MetricsClass {
         return Arrays.asList(moduleName, Integer.toString(numOfFiles), Integer.toString(numOfFunctions), Integer.toString(fileMaxSize),
                 Double.toString(avgFileSize), Double.toString(fileSizeDeviation), Integer.toString(numOfFilesGraph), Integer.toString(numOfFunctionsGraph),
                 Integer.toString(fileMaxSizeGraph), Double.toString(avgFileSizeGraph), Double.toString(fileSizeDeviationGraph),
-                Double.toString(instability),
+                Double.toString(instability), Double.toString(inDegree), Double.toString(outDegree), Double.toString(fanInVisibility),
+                Double.toString(fanOutVisibility),
                 Double.toString(abstraction), Double.toString(distance), Double.toString(dependentModules),
                 Double.toString(avgParameters), Double.toString(avgParametersGraph));
     }
@@ -39,7 +40,8 @@ public class ModuleBasedMetric extends MetricsClass {
         return Arrays.asList("Module Name", "Number of Files", "Number of Functions", "File Max Size",
                 "Average File Size", "File Size Deviation", "Number of Files(Graph)", "Number of Functions(Graph)",
                 "File Maximum Size(Graph)", "Average File Size(Graph)","File Size Deviation(Graph)",
-                "Instability",
+                "Instability", "In Degree", "Out Degree", "Fan In Visibility",
+                "Fan Out Visibility",
                 "Abstraction", "Distance", "Dependent Modules",
                 "Average Parameters", "Average Parameters(Graph)");
     }

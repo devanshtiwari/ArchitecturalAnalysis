@@ -146,7 +146,7 @@ public class Graph {
 
             if (dependencyCsvData.getFile1().endsWith("main.c") && dependencyCsvData.getFunction1().equals("main")) {
                 if (!mainFunc.equals(funcV1))
-                    System.out.println("Main Encountered: " + funcV1);
+//                    System.out.println("Main Encountered: " + funcV1);
                 mainFunc = funcV1;
                 mainFile = dependencyCsvData.getFile1();
                 if (dependencyCsvData.getFile1().lastIndexOf("/")>=0)
@@ -155,7 +155,7 @@ public class Graph {
                     mainModule = "Root/" + projectName;
                 } else if (dependencyCsvData.getFile2().endsWith("main.c") && dependencyCsvData.getFunction1().endsWith("main")) {
                 if (!mainFunc.equals(funcV1))
-                    System.out.println("Main Encountered: " + funcV1);
+//                    System.out.println("Main Encountered: " + funcV1);
                 mainFunc = funcV2;
                 mainFile = dependencyCsvData.getFile2();
                 if (dependencyCsvData.getFile2().lastIndexOf("/")>=0)
@@ -164,7 +164,7 @@ public class Graph {
                     mainModule = "Root/" + projectName;
             } else if (mainFile.equals("") && dependencyCsvData.getFunction1().equals("main")) {
                 if (!mainFunc.equals(funcV1))
-                    System.out.println("Main Encountered: " + funcV1);
+//                    System.out.println("Main Encountered: " + funcV1);
                 mainFunc = funcV1;
                 mainFile = dependencyCsvData.getFile1();
                 if (dependencyCsvData.getFile1().lastIndexOf("/")>=0)
@@ -173,7 +173,7 @@ public class Graph {
                     mainModule = "Root/" + projectName;
             } else if (mainFile.equals("") && dependencyCsvData.getFunction1().endsWith("main")) {
                 if (!mainFunc.equals(funcV1))
-                    System.out.println("Main Encountered: " + funcV1);
+//                    System.out.println("Main Encountered: " + funcV1);
                 mainFunc = funcV1;
                 mainFile = dependencyCsvData.getFile1();
                 if (dependencyCsvData.getFile1().lastIndexOf("/")>=0)
@@ -222,14 +222,6 @@ public class Graph {
 //            tempfGraph.addVertex(fileV2);
 //            System.out.println("fileV1"+ fileV1 + " fileV2" + fileV2);
 
-            //Part where it skips adding loop to file
-            if (fileV1.equals(fileV2))
-                continue;
-
-//            tempfGraph.addEdge(fileV1,fileV2);
-
-            DefaultWeightedEdge edge = fileGraph.addEdge(fileV1, fileV2);
-
             String dir1 = fileV1;
             String dir2 = fileV2;
             if (fileV1.lastIndexOf("/")>=0)
@@ -242,7 +234,19 @@ public class Graph {
                 dir2 = "Root/" + projectName;
 
             directoryGraph.addVertex(dir1);
+
+            //Part where it skips adding loop to file or a directory
+            if (fileV1.equals(fileV2)) {
+                continue;
+            }
             directoryGraph.addVertex(dir2);
+
+
+//            tempfGraph.addEdge(fileV1,fileV2);
+
+            DefaultWeightedEdge edge = fileGraph.addEdge(fileV1, fileV2);
+
+
             directoryGraph.addEdge(dir1,dir2);
 
             if(clusterHashMap.containsKey(dir1)) {
@@ -284,19 +288,19 @@ public class Graph {
                     if(file.contains("main"))
                         f = file;
                 }
-                System.out.println("Size of possible mainFile Options: " + calleeSet.size());
+//                System.out.println("Size of possible mainFile Options: " + calleeSet.size());
                 mainFile = f;
-                System.out.println(mainFile);
+//                System.out.println(mainFile);
             }
         }
-        System.out.println("Main File: " + mainFile);
+//        System.out.println("Main File: " + mainFile);
     }
 
     public void generateGraph() {
         MutableGraph g = mutGraph("Dependency Graph").setDirected(true).use((gr, ctx) -> {
-            for (DefaultWeightedEdge e : functionGraph.edgeSet()) {
+            for (DefaultWeightedEdge e : fileGraph.edgeSet()) {
                 String[] splits = e.toString().substring(1, e.toString().length() - 1).split(":");
-                linkAttrs().add(Style.BOLD, Label.of(Double.toString(functionGraph.getEdgeWeight(e))), Color.RED);
+                linkAttrs().add(Style.BOLD, Label.of(Double.toString(fileGraph.getEdgeWeight(e))), Color.RED);
                 nodeAttrs().add(Color.RED);
                 mutNode(splits[0].trim()).addLink(mutNode(splits[1].trim()));
             }

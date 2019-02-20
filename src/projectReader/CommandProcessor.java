@@ -37,7 +37,7 @@ public class CommandProcessor {
                     FunctionPoint functionPoint = new FunctionPoint();
 
                     String[] splits = line.split("\\s+");
-                    System.out.println(splits[0] + " " + splits[1]);
+//                    System.out.println(splits[0] + " " + splits[1]);
                     if (!(splits[1].equals("function") || splits[1].equals("macro") || splits[1].equals("prototype")))
                         continue;
                     functionPoint.setLocation(file);
@@ -140,7 +140,7 @@ public class CommandProcessor {
                 while(dirHeaderiterator.hasNext()){
                     File dirhf = dirHeaderiterator.next();
                     if(dirhf.getName().equals(hhf)) {
-                        System.out.println("bikkurishita");
+//                        System.out.println("bikkurishita");
                         dirHeadersForUpdate.add(new File(dirhf.getAbsolutePath()));
                         headerToFile.putIfAbsent(dirhf,new HashSet<>(Arrays.asList(file)));
                         headerToFile.computeIfPresent(dirhf,(k,v)->{v.add(file);return v;});
@@ -167,11 +167,11 @@ public class CommandProcessor {
 
     private Pair<Matcher,Integer> whichMatcher(Matcher m1, Matcher m2){
         if(m1.matches()) {
-            System.out.println("Matches with 1st");
+//            System.out.println("Matches with 1st");
             return new Pair<>(m1,1);
         }
         else if(m2.matches()) {
-            System.out.println("Matches with 2nd");
+//            System.out.println("Matches with 2nd");
             return new Pair<>(m2,2);
         }
         else return new Pair<>(null,0);
@@ -197,7 +197,7 @@ public class CommandProcessor {
 
 
             while( (line = reader.readLine())!=null) {
-                System.out.println("--Loop Starts--");
+//                System.out.println("--Loop Starts--");
                 //TODO DO NOT IGNORE THE DEPTH LATER ON
                 //Group0 Complete String
                 //Group1 Depth inside {}
@@ -254,7 +254,7 @@ public class CommandProcessor {
                         cFlowLine.function.name = matcher.group(3);
 //                        cFlowLine.lineno = Integer.parseInt(matcher.group(9));
                     }
-                    System.out.println("Depth: " + depth +"and current depth: "+ cFlowLine.depth);
+//                    System.out.println("Depth: " + depth +"and current depth: "+ cFlowLine.depth);
                     if(depth> cFlowLine.depth){
                         while(depth> cFlowLine.depth){
                             callee.pop();
@@ -268,7 +268,7 @@ public class CommandProcessor {
 //                    }
                     if(checkNext == 1 && depth == cFlowLine.depth) {
                         callee.pop();
-                        System.out.println("Popping out checknext is true");
+//                        System.out.println("Popping out checknext is true");
                     }
 
                     if(cFlowLine.depth == 0) {
@@ -297,15 +297,15 @@ public class CommandProcessor {
                         else
                         {
 
-                            System.out.println("Did not find defined place for " + cFlowLine.getFunction());
+//                            System.out.println("Did not find defined place for " + cFlowLine.getFunction());
                             fp2.setFile(null);
                         }
                     }
 
-                    if(whichMatcher == 1 && matcher.group(16)!=null)
-                        System.out.println("Group 16 " + matcher.group(16));
-                    else
-                        System.out.println("Group 16 is null");
+//                    if(whichMatcher == 1 && matcher.group(16)!=null)
+////                        System.out.println("Group 16 " + matcher.group(16));
+//                    else
+////                        System.out.println("Group 16 is null");
                     if(whichMatcher == 1&&matcher.group(16)!=null && matcher.group(16).equals(":")) {
                         callee.push(cFlowLine.function.name);
                         checkNext = 1;
@@ -317,15 +317,15 @@ public class CommandProcessor {
                     else
                         checkNext = 0;
                     depth = cFlowLine.depth;
-                    System.out.println("Stack size: " + callee.size());
+//                    System.out.println("Stack size: " + callee.size());
 
                     cFlowLines.add(cFlowLine);
                     dependencies.put(fp1,fp2);
 
                 } else {
-                    System.out.println("Do not Match: " + line);
+//                    System.out.println("Do not Match: " + line);
                 }
-                System.out.println("--Loop Ends--");
+//                System.out.println("--Loop Ends--");
             }
             reader.close();
 //            proc.waitFor();
@@ -345,10 +345,10 @@ public class CommandProcessor {
         for(String header:fileHeaders.get(calledFile)) {
             if (headerToFileName.containsKey(header)) {
                 for (File fileInHeader : headerToFileName.get(header)) {
-                    if (fun.equals("cs_reg_name") && calledFile.getName().equals("test_arm_regression.c"))
-                        System.out.println("stop");
-                    if (fun.equals("cs_reg_name") && calledFile.getName().equals("test_arm_regression.c") && fileInHeader.getName().equals("cs.c"))
-                        System.out.println("stop");
+//                    if (fun.equals("cs_reg_name") && calledFile.getName().equals("test_arm_regression.c"))
+////                        System.out.println("stop");
+//                    if (fun.equals("cs_reg_name") && calledFile.getName().equals("test_arm_regression.c") && fileInHeader.getName().equals("cs.c"))
+////                        System.out.println("stop");
                     if (functions.containsKey(fileInHeader)) {
                         for (FunctionPoint funp : functions.get(fileInHeader)) {
                             if (funp.getName().equals(fun)) {

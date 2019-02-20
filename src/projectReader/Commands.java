@@ -11,7 +11,7 @@ public class Commands {
 
     static BufferedReader ctagsFunctionList(File f) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder("ctags", "-x","--c-kinds=fpd",f.getAbsolutePath());
-        System.out.println(pb.command().toString());
+//        System.out.println(pb.command().toString());
         Process proc = pb.start();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         return  bufferedReader;
@@ -20,7 +20,7 @@ public class Commands {
     static BufferedReader ctagsHeaderInfo(File f) throws IOException {
 //        ProcessBuilder pb = new ProcessBuilder("gcc", "-MM",f.getAbsolutePath());
         ProcessBuilder pb = new ProcessBuilder("ctags", "-x","--extras=r","--kinds-c=h","--language-force=c",f.getAbsolutePath());
-        System.out.println(pb.command().toString());
+//        System.out.println(pb.command().toString());
         Process proc = pb.start();
 //        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 //        String line = "" ;
@@ -37,7 +37,7 @@ public class Commands {
         ProcessBuilder pb = new ProcessBuilder("cflow","-l", "--cpp",f.getAbsolutePath());
         pb.redirectErrorStream(true); // merge stdout and stderr FIXED ERROR
 
-        System.out.println(pb.command().toString());
+//        System.out.println(pb.command().toString());
         Process proc = pb.start();
         return new BufferedReader(new InputStreamReader(proc.getInputStream()));
 

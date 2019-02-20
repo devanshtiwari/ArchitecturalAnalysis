@@ -46,7 +46,7 @@ public class DataOrganiser {
         ArrayList<HeaderIncludedCSVInfo> data = new ArrayList<>();
         for(List<String> row: csvData){
             if(row.size()!=4) {
-                System.out.println("Problem with the size of the input of Header to File Info CSV File");
+//                System.out.println("Problem with the size of the input of Header to File Info CSV File");
                 continue;
             }
             HeaderIncludedCSVInfo headerIncludedCSVInfo = new HeaderIncludedCSVInfo();
@@ -72,7 +72,7 @@ public class DataOrganiser {
 
         for(List<String> row: csvData){
             if(row.size()!=4) {
-                System.out.println("Problem with the size of the input of Function Info CSV File");
+//                System.out.println("Problem with the size of the input of Function Info CSV File");
                 continue;
             }
             FunctionCSVInfo functionCSVInfo = new FunctionCSVInfo();
@@ -112,7 +112,7 @@ public class DataOrganiser {
         ArrayList<FileHeaderCSVInfo> data = new ArrayList<>();
         for(List<String> row: csvData){
             if(row.size()<1) {
-                System.out.println("Problem with the size of the input of File Header Info CSV File");
+//                System.out.println("Problem with the size of the input of File Header Info CSV File");
                 continue;
             }
             FileHeaderCSVInfo fileHeaderCSVInfo = new FileHeaderCSVInfo();
@@ -120,7 +120,19 @@ public class DataOrganiser {
             if(row.size() == 1)
                 fileHeaderCSVInfo.setHeadersFromArray(new String []{});
             else
-            fileHeaderCSVInfo.setHeadersFromArray(row.get(1).split(";",0));
+                fileHeaderCSVInfo.setHeadersFromArray(row.get(1).split(";",0));
+
+            //In case ctags can not detect any functions in a c file, but that file is there, it should be added.
+            String dir;
+            if (row.get(0).lastIndexOf("/")>=0)
+                dir = row.get(0).substring(0, row.get(0).lastIndexOf("/"));
+            else
+                dir = "Root/" + projectName;
+
+            metricsInputContent.getModuletoFileMap().computeIfPresent(dir,(k,v)->{v.add(row.get(0));return v;});
+            metricsInputContent.getModuletoFileMap().putIfAbsent(dir, new HashSet<>(Arrays.asList(row.get(0))));
+            metricsInputContent.getFiletoFunctionMap().computeIfPresent(row.get(0),(k,v)-> v);
+            metricsInputContent.getFiletoFunctionMap().putIfAbsent(row.get(0), new HashSet<>(Arrays.asList()));
 
             data.add(fileHeaderCSVInfo);
         }
@@ -141,7 +153,7 @@ public class DataOrganiser {
         ArrayList<DependencyCSVData> data = new ArrayList<>();
         for(List<String> row: csvData){
             if(row.size()!=4) {
-                System.out.println("Problem with the size of the input of Dependency CSV File");
+//                System.out.println("Problem with the size of the input of Dependency CSV File");
                 continue;
             }
             DependencyCSVData dependencyCSVData = new DependencyCSVData();

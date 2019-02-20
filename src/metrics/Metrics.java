@@ -348,7 +348,7 @@ public class Metrics {
         return density(graph.getFunctionGraph());
     }
 
-    public static LinkedHashMap<String, double[]> matrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> receivedGraph) throws ExportException {
+    public static LinkedHashMap<String, double[]> matrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> receivedGraph) throws Exception {
 
         OutputStream output = new OutputStream()
         {
@@ -395,11 +395,12 @@ public class Metrics {
                 row[i - 1] = Integer.parseInt(splits[i]);
             }
             if(!vertex.equals(v[++l]))
-                System.out.println("ALARM! ALARM! ALARM! ALARM!");
+                throw new Exception("Should not happen");
+//                System.out.println("ALARM! ALARM! ALARM! ALARM!");
             linkedHashMap.put(vertex, row);
         }
 
-        if(linkedHashMap.size()==0)
+        if(linkedHashMap.size() == 0)
             return null;
         return linkedHashMap;
 
@@ -409,15 +410,15 @@ public class Metrics {
     public void connectedSets(){
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> g = graph.getFileGraph();
         BiconnectivityInspector con = new BiconnectivityInspector(g);
-        System.out.println("\nConnected Sets: " + con.getConnectedComponents());
+//        System.out.println("\nConnected Sets: " + con.getConnectedComponents());
         Iterator itr = con.getConnectedComponents().iterator();
         int countSingletons = 0;
         while(itr.hasNext()){
             if(((AsSubgraph) itr.next()).vertexSet().size() == 1)
                 countSingletons ++;
         }
-        System.out.println("Singletons: " + countSingletons);
-        System.out.println("Rest: " + (con.getConnectedComponents().size()-countSingletons));
+//        System.out.println("Singletons: " + countSingletons);
+//        System.out.println("Rest: " + (con.getConnectedComponents().size()-countSingletons));
     }
 
 
@@ -439,7 +440,7 @@ public class Metrics {
 //            System.out.println("ai: " + ai );
             Qval += (eii/n - (ai/n)*(ai/n));
         }
-        System.out.println("QValue: " + Qval);
+//        System.out.println("QValue: " + Qval);
         return Qval;
     }
 
@@ -449,13 +450,13 @@ public class Metrics {
         double denominator = 0;
         for(String str:clusterMap.keySet()){
             double dens = clusterMap.get(str).getEdges()/((clusterMap.get(str).getNodes()+1.0)*(clusterMap.get(str).getNodes()));
-            System.out.println(str + ": " + dens);
+//            System.out.println(str + ": " + dens);
             avg += dens * clusterMap.get(str).getNodes();
             denominator += clusterMap.get(str).getNodes();
         }
 //        denominator /= (double) clusterMap.size();
         avg /=  denominator;
-        System.out.println("Graph Cluster wise Average: " + avg);
+//        System.out.println("Graph Cluster wise Average: " + avg);
         return avg;
     }
 
@@ -470,9 +471,9 @@ public class Metrics {
                 instability += 0;
             else
                 instability += graph.Ce.get(cluster)/(graph.Ca.get(cluster) + graph.Ce.get(cluster));
-            System.out.println(cluster + " : " + (instability-temp));
+//            System.out.println(cluster + " : " + (instability-temp));
         }
-        System.out.println("Average Instability: " + instability/graph.Ca.size());
+//        System.out.println("Average Instability: " + instability/graph.Ca.size());
         return instability;
     }
 

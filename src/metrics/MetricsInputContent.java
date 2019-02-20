@@ -9,7 +9,7 @@ import java.util.HashSet;
 public class MetricsInputContent {
 
     private String projectName;
-    private Graph graph;
+    private Graph graph = new Graph("");
     private ArrayList<HeaderIncludedCSVInfo> headerIncludedCSVInfoArrayList;
     private HashMap<String, FunctionCSVInfo> functionCSVInfoArrayList;
     private ArrayList<FileHeaderCSVInfo> fileHeaderCSVInfoArrayList;

@@ -38,7 +38,7 @@ public class ProjectDirectoryReader {
     private void readDir(File dir) throws NotDirectoryException {
         //TODO change it to regex later properly
         if(!dir.isDirectory()) {
-            System.out.println("Input Path is not directory.");
+//            System.out.println("Input Path is not directory.");
             throw new NotDirectoryException(dir.getPath());
         }
         for(File file: dir.listFiles()){

@@ -15,12 +15,16 @@ public class FileBasedMetric extends MetricsClass {
     int avgParametersGraph = -1;
 
     public List<String> getRow(){
-        return Arrays.asList(fileName, Integer.toString(numOfFunctions), Integer.toString(externalFunctionsCalled), Double.toString(avgParameters),
+        return Arrays.asList(fileName, Integer.toString(numOfFunctions), Double.toString(inDegree), Double.toString(outDegree),
+                Double.toString(fanInVisibility), Double.toString(fanOutVisibility),
+                Integer.toString(externalFunctionsCalled), Double.toString(avgParameters),
                 Integer.toString(numOfFunctionsGraph), Integer.toString(avgParametersGraph));
     }
 
     static List<String> getHeader(){
-        return Arrays.asList("File Name", "Numbe of functions", "External Functions Called", "Average Parameters",
+        return Arrays.asList("File Name", "Numbe of functions", "In Degrees", "Out Degrees",
+                "Fan In Visibility", "Fan Out Visibility",
+                "External Functions Called", "Average Parameters",
                 "Number of Functions(Graph)", "Average Parameters(Graph)");
     }
 
