@@ -5,7 +5,7 @@ This tool consists of two parts, ie. contains two main methods.
 * Dependency CSV Generation
 * Metrics Generation from Dependency CSV
 
-###Dependencies
+### Dependencies
 
 This tool uses the output of the following open source libaries 
 for the processing of C files to generate Dependency CSV.
@@ -24,7 +24,7 @@ in JetBrains Intellij.
 * org.json:json:20180813
 * org.apache.commons:commons-math3:3.6.1
 
-###1. Dependency CSV Generation
+### 1. Dependency CSV Generation
 
 Since user interaction is not complete yet, changes to run the script
 are required to be made at code level. 
@@ -66,7 +66,7 @@ The CSV directory will contain,
 Each subfolder will have a csv named after the projects that were inside the  ``projectDir``.
 
 
-###2. Metrics Generation
+### 2. Metrics Generation
 
 The second part is the metric generation using the generated CSV from the previous step.
 For this step, head to `mainApp.MetricsApp`. Manually set the CSV directory to the variable `CSVdir`
@@ -79,7 +79,7 @@ in the main method. Now simply run the `MetricsApp`, and it will generate metric
 * Other metrics which are evaluated per node, ie. module level, file level and function level are saved in
 subfolders named `ModuleNode`, `FileNode` and `FunctionNode`.
 
-#####Generating Dependency Graphs Images [To be improved]
+##### Generating Dependency Graphs Images [To be improved]
 
 To do this, head to `metrics.DataOrganiser` and search for `evaluateDependency` method.
 Call to ```graph.setDependencyCSVData``` needs to have true parameter instead of 
