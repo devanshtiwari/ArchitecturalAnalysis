@@ -117,16 +117,6 @@ public class Graph {
         }
 
     }
-    public void setFunctionCSVData(){
-
-    }
-    public void setFileInfoCSVData(){
-
-    }
-    public void setHeaderIncludeInfoCSVData(){
-
-    }
-
 
     private void mapToGraph(List<DependencyCSVData> dependencyCsvDataList) {
 

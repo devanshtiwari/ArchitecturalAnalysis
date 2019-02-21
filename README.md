@@ -16,7 +16,7 @@ Make sure commands `cflow` and `ctags` are running on your command line
 before proceeding to run this java tool.
 
 Other dependencies are Java libraries used in the Java project. These
-libraries are already included in the iml file. This proejct is worked
+libraries are already included in the iml file. This proejct is built using 
 in JetBrains Intellij.
 * org.jgrapht:jgrapht-core:1.2.0
 * guru.nidi:graphviz-java:0.7.0
