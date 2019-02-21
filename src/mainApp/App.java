@@ -26,16 +26,12 @@ public class App {
             long start = System.currentTimeMillis();
             System.out.println(++counter+ "/" + total + ". Project Name: " + proj);
 
-            HashMap<String, ArrayList> projectFileInfo; //Including headers
-            HashMap<String, ArrayList> projectFunctionInfo; //Including Parameters
-
             ProjectDirectoryReader projectDirectoryReader = new ProjectDirectoryReader(proj);
             //TODO can be done in a single go
             ProjectProcessor projectProcessor  =new ProjectProcessor();
             projectProcessor.projectParse(proj);
 
 
-//            headers.put(proj.getName(),h);
             List<List<String>> dependencyCSVData = projectProcessor.getFileDependencyCSVFormat(projectDirectoryReader,true);
             List<List<String>> fileInfoCSV = projectProcessor.getFileInfoCSVFormat(true);
             List<List<String>> functionInfoCSV = projectProcessor.getFunctionInfoCSVFormat(true);
@@ -51,19 +47,8 @@ public class App {
             csvWriter.setFile("HeaderIncludeInfo",projectDirectoryReader.getProjectFile());
             csvWriter.writez(headerToFileCSV);
             System.out.println((System.currentTimeMillis() - start)/1000D + " Seconds");
-//
-////            for (File file : projectDirectoryReader.getSourceFiles()) {
-////                projectDependencies = commandProcessor.getDependencies(new File(file.getAbsolutePath()));
-////                if (!projectDependencies.keySet().isEmpty()) {
-////                    csvWriter.write(projectDependencies, proj);
-////                }
-////            }
-        }
 
-//        FileOutputStream fos = new FileOutputStream("headers");
-//        ObjectOutputStream oos = new ObjectOutputStream(fos);
-//        oos.writeObject(headers);
-//        System.out.println(dirHeaders);
+        }
     }
 }
 

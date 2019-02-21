@@ -8,6 +8,7 @@ import org.jgrapht.alg.connectivity.BiconnectivityInspector;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
+
 import org.jgrapht.io.ExportException;
 
 import java.util.*;
@@ -843,7 +844,7 @@ public class MetricsContainer {
         return 1;
     }
 
-    DirectedWeightedPseudograph<String, DefaultWeightedEdge> globalPathFindergraph;
+    private DirectedWeightedPseudograph<String, DefaultWeightedEdge> globalPathFindergraph;
 
     private HashSet<DefaultWeightedEdge> cycleAllEdges = new HashSet<>();
     private HashSet<DefaultWeightedEdge> cycleMinEdges = new HashSet<>();

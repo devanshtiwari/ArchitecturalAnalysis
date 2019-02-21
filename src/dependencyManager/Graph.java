@@ -111,8 +111,11 @@ public class Graph {
 
     public void setDependencyCSVData(List<DependencyCSVData> dependencyCsvDataList, Boolean generateGraph){
         mapToGraph(dependencyCsvDataList);
-        if (generateGraph == TRUE)
-            generateGraph();
+        if (generateGraph == TRUE){
+            generateGraphFile();
+            generateGraphModule();
+        }
+
     }
     public void setFunctionCSVData(){
 
@@ -296,8 +299,8 @@ public class Graph {
 //        System.out.println("Main File: " + mainFile);
     }
 
-    public void generateGraph() {
-        MutableGraph g = mutGraph("Dependency Graph").setDirected(true).use((gr, ctx) -> {
+    public void generateGraphFile() {
+        MutableGraph g = mutGraph("File Dependency Graph").setDirected(true).use((gr, ctx) -> {
             for (DefaultWeightedEdge e : fileGraph.edgeSet()) {
                 String[] splits = e.toString().substring(1, e.toString().length() - 1).split(":");
                 linkAttrs().add(Style.BOLD, Label.of(Double.toString(fileGraph.getEdgeWeight(e))), Color.RED);
@@ -307,15 +310,15 @@ public class Graph {
         });
 
         try {
-            Graphviz.fromGraph(g).width(10000).scale(2).render(Format.PNG).toFile(new File(projectName));
+            Graphviz.fromGraph(g).width(10000).scale(2).render(Format.PNG).toFile(new File(projectName + "File"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    public void generateGraph2() {
-        MutableGraph g = mutGraph("Dependency Graph").setDirected(true).use((gr, ctx) -> {
+    public void generateGraphModule() {
+        MutableGraph g = mutGraph("Module Dependency Graph").setDirected(true).use((gr, ctx) -> {
             for (DefaultWeightedEdge e : directoryGraph.edgeSet()) {
                 String[] splits = e.toString().substring(1, e.toString().length() - 1).split(":");
                 linkAttrs().add(Style.BOLD, Label.of(Double.toString(functionGraph.getEdgeWeight(e))), Color.RED);
@@ -328,7 +331,7 @@ public class Graph {
         });
 
         try {
-            Graphviz.fromGraph(g).width(10000).scale(1).render(Format.PNG).toFile(new File(projectName));
+            Graphviz.fromGraph(g).width(10000).scale(1).render(Format.PNG).toFile(new File(projectName + "Module"));
         } catch (IOException e) {
             e.printStackTrace();
         }

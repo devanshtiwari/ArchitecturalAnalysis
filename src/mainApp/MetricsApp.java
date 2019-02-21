@@ -31,12 +31,8 @@ public class MetricsApp {
 
     public static void main(String[] args) throws Exception {
 
-//        CSVWriter csvWriter = new CSVWriter(new File("/Users/devan/Desktop/Architectural Refactoring Project/Documents from Company/projects/csv/myCSVNew"));
-//        File dir = new File("/Users/devan/Desktop/Architectural Refactoring Project/Documents from Company/projects/csv/");
-        File dir = new File("/Users/devan/Documents/ArchitecturalAnalysis/CSV");
-        List<MetricsPOJO> metricsPOJOS = new ArrayList<>();
-        List<MetricsContainer> metricsContainers = new ArrayList<>();
-        HashMap<String, ArrayList<Pair<String, File>>> allCSVFiles = getFiles(dir);
+        File CSVdir = new File("/Users/devan/Documents/ArchitecturalAnalysis/CSV");
+        HashMap<String, ArrayList<Pair<String, File>>> allCSVFiles = getFiles(CSVdir);
 
         List<List<String>> wholeProjectCSV = new ArrayList<>();
         List<List<String>> nodeModuleCSV;
@@ -59,6 +55,7 @@ public class MetricsApp {
             MetricsContainer metricsContainer  = new MetricsContainer(metricsInputContent);
 
             metricsContainer.calculateStats();
+            //Check whether top 3 files with highest indegree are library, ie. they have library or lib as substring in their path.
             if(metricsContainer.isLib > 0)
                 countLib++;
             wholeProjectCSV.add(metricsContainer.getRow());
@@ -73,68 +70,10 @@ public class MetricsApp {
             csvWriter1.writez(nodeFunctionCSV);
 
             System.out.println((start-System.currentTimeMillis())/1000D + " Seconds.");
-
-            //            //        FileReader csvReader = new FileReader("/Users/devan/Documents/ArchitecturalAnalysis/Output Good/bzip2.csv",true);
-//            CSVReader csvReader = new CSVReader(f.getAbsolutePath(),true);
-//            csvReader.read();
-//
-//            MetricsPOJO metricsPOJO = new MetricsPOJO();
-//
-//            metricsPOJO.setProjectName(f.getName().substring(0, f.getName().length() - 4));
-//            System.out.println("--------------------------------\n" + metricsPOJO.getProjectName() + "\n--------------------------------");
-//            Graph graph;
-////            if(!(f.getName().contains("bash") || f.getName().contains("dia")))
-////                graph = new Graph(csvReader.getFileData(), metricsPOJO.getProjectName(), true);
-////            else
-////                graph = new Graph(csvReader.getFileData(), metricsPOJO.getProjectName(), false);
-//            graph = new Graph(csvReader.getFileData(), metricsPOJO.getProjectName(), false);
-//            System.out.println(graph.getClusterHashMap());
-
-//            Metrics metrics = new Metrics(metricsInputContent.getGraph());
-//            MetricsPOJO metricsPOJO = new MetricsPOJO();
-//
-//            metricsPOJO.setProjectName(projectName);
-//
-//            metricsPOJO.setComplexity(metrics.callComplexity());
-//            metricsPOJO.setAvgFileSize(metrics.averageFileFunctions());
-//            metricsPOJO.setFileSizeDeviation(metrics.sizeDeviation());
-//            metricsPOJO.setFileMaxSize(metrics.maxFunctions());
-//            metricsPOJO.setNumOfFiles(metrics.numberOfFiles());
-//            metricsPOJO.setNumOfFunctions(metrics.numberOfFunctions());
-//            double inout[] = metrics.inoutDependency();
-//            metricsPOJO.setIncomingDepeConc(inout[0]);
-//            metricsPOJO.setOutgoingDepConc(inout[1]);
-//            metricsPOJO.setNormalizedCyleEdges(metrics.normalizedCycleEdges());
-//            metricsPOJO.setNormalizedCyclePaths(metrics.normalizedCyclePaths());
-//            metricsPOJO.setWeightedDependencyCost(metrics.weightedDependencyCost());
-//            metricsPOJO.setDependencies(metrics.gdependency());
-//            metricsPOJO.setWeightedDependencyCostSQ(metrics.weightedDependencyCostSQ());
-//            metricsPOJO.setFileCuttingNumber(metrics.fileCuttingNumber());
-//            metricsPOJO.setFunctionCuttingNumber(metrics.functionCuttingNumber());
-//            metricsPOJO.setFileGraphDensity(metrics.fileDensity());
-//            metricsPOJO.setFunctionGraphDensity(metrics.functionDensity());
-//            metricsPOJO.setQValue(metrics.QValue());
-//            metricsPOJO.setAvgClusterDependency(metrics.avgClusterDensity());
-//            metrics.cyclomaticComplexity();
-//            metricsPOJOS.add(metricsPOJO);
-
-//            metrics.matrix();
-//            metrics.instability();
-
-//            metrics.QValue();
-//            metrics.stronglyConnected();
-//            metrics.connectedSets();
-//            metrics.avgClusterDensity();
         }
 
         System.out.println("Hit Percentage: " + (countLib/(double)total));
         csvWriter1.setFile("AllProjects");
         csvWriter1.writez(wholeProjectCSV);
-
-//        csvWriter.writeMetric(metricsPOJOS);
-//        csvWriter.close();
-//        csvWriter1.close();
-
-
     }
 }
