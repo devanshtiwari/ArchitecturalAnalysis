@@ -5,6 +5,4 @@ public abstract class MetricsClass {
     double outDegree = 0;
     double fanInVisibility = 0;
     double fanOutVisibility = 0;
-
-
 }

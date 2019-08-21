@@ -15,6 +15,7 @@ import java.util.*;
 
 import static metrics.Metrics.inoutDegree;
 
+
 public class MetricsContainer {
 
     private String projectName;
@@ -108,15 +109,22 @@ public class MetricsContainer {
     }
 
     public List<List<String>> getModuleNodeMetricsCSV(){
+        return getModuleNodeMetricsCSV(false);
+
+    }
+
+    public List<List<String>> getModuleNodeMetricsCSV(Boolean noheader){
         List<List<String>> csv = new ArrayList<>();
-        csv.add(ModuleBasedMetric.getHeader());
+        if(!noheader)
+            csv.add(ModuleBasedMetric.getHeader());
         for(String module : moduleBasedMetrics.keySet()){
             csv.add(moduleBasedMetrics.get(module).getRow());
         }
         return csv;
     }
 
-    public List<List<String>> getFileNodeMetricsCSV(){
+
+        public List<List<String>> getFileNodeMetricsCSV(){
         List<List<String>> csv = new ArrayList<>();
         csv.add(FileBasedMetric.getHeader());
         for(String file : fileBasedMetrics.keySet()){
@@ -366,7 +374,7 @@ public class MetricsContainer {
             double[] inout = inoutDegree(funcG, v);
             funcsumInOut += inout[0] * inout[0];
         }
-        dep = 1.0 - ((double) numOfFiles * filesumInOut) / ((double) numOfFunctions * funcsumInOut);
+        dep = 1.0 - ((double) numOfFilesGraph * filesumInOut) / ((double) numOfFunctionsGraph * funcsumInOut);
 
 //        System.out.println("Incoming concentration: " + dep);
         this.dependencyConc = dep;
@@ -390,19 +398,19 @@ public class MetricsContainer {
         for (String file : fileG.vertexSet()) {
             double[] inout = inoutDegree(fileG, file);
             numeratorfile += inout[0] * inout[1];
-            numberOfFiles++;
+            numberOfFiles ++;
         }
 
         for (String function : funcG.vertexSet()) {
             double[] inout = inoutDegree(funcG, function);
             numeratorfunc += inout[0] * inout[1];
-            numberOfFunctions++;
+            numberOfFunctions ++;
         }
 
         for (String module : moduleG.vertexSet()) {
             double[] inout = inoutDegree(moduleG, module);
             numeratormodule += inout[0] * inout[1];
-            numberOfModules++;
+            numberOfModules ++;
         }
 
         if(numberOfFiles == 0 || numberOfFiles == 1)
@@ -501,11 +509,11 @@ public class MetricsContainer {
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
 
         if(moduleG.vertexSet().size() != 0 && moduleG.vertexSet().size() != 1)
-            this.moduleDensity = (double)moduleG.edgeSet().size()/(double)(moduleG.vertexSet().size()*(moduleG.vertexSet().size()-1));
+            this.moduleDensity = (double) moduleG.edgeSet().size()/(double)(moduleG.vertexSet().size()*(moduleG.vertexSet().size()-1));
         if(fileG.vertexSet().size() != 0 && fileG.vertexSet().size() != 1)
-            this.fileDensity = (double)fileG.edgeSet().size()/(double)(fileG.vertexSet().size()*(fileG.vertexSet().size()-1));
+            this.fileDensity = (double) fileG.edgeSet().size()/(double)(fileG.vertexSet().size()*(fileG.vertexSet().size()-1));
         if(funcG.vertexSet().size() != 0 && funcG.vertexSet().size() != 1)
-            this.functionDensity = (double)funcG.edgeSet().size()/(double)(funcG.vertexSet().size()*(funcG.vertexSet().size()-1));
+            this.functionDensity = (double) funcG.edgeSet().size()/(double)(funcG.vertexSet().size()*(funcG.vertexSet().size()-1));
     }
 
     void cuttingNumber(){
@@ -623,11 +631,8 @@ public class MetricsContainer {
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> funcG = metricsInputContent.getGraph().getFunctionGraph();
         DirectedWeightedPseudograph<String, DefaultWeightedEdge> moduleG = metricsInputContent.getGraph().getDirectoryGraph();
 
-
 //        LinkedHashMap<String, double[]> fileLinkedHashMapMatrix = Metrics.matrix(fileG);
 //        LinkedHashMap<String, double[]> linkedHashMapMatrix = Metrics.matrix(g);
-
-
 
         HashMap<String, double[]> fileFinalMatrix = getFinalMatrix(fileG);
 //        HashMap<String, double[]> funcFinalMatrix = getFinalMatrix(funcG);
@@ -640,7 +645,6 @@ public class MetricsContainer {
 //        this.functionPropagationCost = propagationCost;
         propagationCost = calculateFanInFanOut(moduleG, moduleBasedMetrics, moduleFinalMatrix);
         this.modulePropagationCost = propagationCost;
-
 
 //        double adMatrix[][] = new double[fileLinkedHashMapMatrix.size()][fileLinkedHashMapMatrix.size()];
 //        int l = 0;
@@ -665,7 +669,7 @@ public class MetricsContainer {
 //        for(int i = 0; i< f.length;i++){
 //            for(int j=0; j<f.length;j++){
 //                if(f[i][j]!=0)
-//                    sum += 1;
+
 //            }
 //        }
 //        if(f.length == 1)
@@ -698,13 +702,13 @@ public class MetricsContainer {
                 columnWise[i] += (row[i] != 0)? 1 : 0;;
             }
 
-            ((MetricsClass)hashMap.get(file)).fanInVisibility =  rowWise / (double) row.length;
+            ((MetricsClass)hashMap.get(file)).fanOutVisibility =  rowWise / (double) row.length;
             sum1 += rowWise;
         }
         k = 0;
         for(String file : linkedHashMapMatrix.keySet()){
             if(hashMap.get(file) != null) {
-                ((MetricsClass)hashMap.get(file)).fanOutVisibility = columnWise[k] / (double) columnWise.length;
+                ((MetricsClass)hashMap.get(file)).fanInVisibility = columnWise[k] / (double) columnWise.length;
             }
             sum2 += columnWise[k];
             k++;
@@ -895,6 +899,7 @@ public class MetricsContainer {
         }
 //        System.out.println("Singletons: " + countSingletons);
 //        System.out.println("Rest: " + (con.getConnectedComponents().size() - countSingletons));
+        System.out.println("Connected: " + con.getConnectedComponents());
         return (con.getConnectedComponents().size() - countSingletons);
 
         //This thing is not that much.

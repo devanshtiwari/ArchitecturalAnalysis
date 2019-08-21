@@ -300,7 +300,7 @@ public class Graph {
         });
 
         try {
-            Graphviz.fromGraph(g).width(10000).scale(2).render(Format.PNG).toFile(new File(projectName + "File"));
+            Graphviz.fromGraph(g).width(1000).scale(2).render(Format.PNG).toFile(new File(projectName + "File"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -321,7 +321,7 @@ public class Graph {
         });
 
         try {
-            Graphviz.fromGraph(g).width(10000).scale(1).render(Format.PNG).toFile(new File(projectName + "Module"));
+            Graphviz.fromGraph(g).width(1000).scale(1).render(Format.PNG).toFile(new File(projectName + "Module"));
         } catch (IOException e) {
             e.printStackTrace();
         }

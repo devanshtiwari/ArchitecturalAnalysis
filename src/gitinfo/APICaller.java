@@ -1,5 +1,6 @@
 package gitinfo;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,22 +13,27 @@ import java.util.*;
 
 public class APICaller {
 
-    public static void main(String[] args) throws IOException, ParseException, InterruptedException {
-        FileReader fileReader = new FileReader("api.txt");
-        fileReader.consoleOut();
-        List<String> repos = fileReader.getFileData();
-        GitAPI gitAPI = new GitAPI();
-        JSONArray jsonArrayCommitStats;
-        JSONObject jsonArraySummary;
+    public static void main(String[] args) throws IOException, ParseException, InterruptedException, GitAPIException {
 
-        CSVWriter csvWriter = new CSVWriter(new File("github"),true);
-        for(String repo: repos){
-            jsonArrayCommitStats = gitAPI.callCommitStats(repo);
-            jsonArraySummary = gitAPI.callSummary(repo);
-            List list = processJSON(jsonArrayCommitStats, jsonArraySummary);
-            csvWriter.write(list);
-        }
-        csvWriter.close();
+        GitLog gitLog = new GitLog(new File("/Users/devan/Documents/ArchitecturalAnalysis/ProjectsSources/TestProjects/TestCProject"));
+
+
+//        FileReader fileReader = new FileReader("api.txt");
+//        fileReader.consoleOut();
+//        List<String> repos = fileReader.getFileData();
+//        GitAPI gitAPI = new GitAPI();
+//        JSONArray jsonArrayCommitStats;
+//        JSONObject jsonArraySummary;
+
+
+//        CSVWriter csvWriter = new CSVWriter(new File("github"),true);
+//        for(String repo: repos){
+//            jsonArrayCommitStats = gitAPI.callCommitStats(repo);
+//            jsonArraySummary = gitAPI.callSummary(repo);
+//            List list = processJSON(jsonArrayCommitStats, jsonArraySummary);
+//            csvWriter.write(list);
+//        }
+//        csvWriter.close();
 
     }
 

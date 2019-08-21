@@ -7,10 +7,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="org.jgrapht:jgrapht-core:1.2.0" level="project" />
-    <orderEntry type="library" name="guru.nidi:graphviz-java:0.7.0" level="project" />
-    <orderEntry type="library" name="org.jgrapht:jgrapht-io:1.2.0" level="project" />
+    <orderEntry type="library" exported="" name="org.jgrapht:jgrapht-core:1.2.0" level="project" />
+    <orderEntry type="library" exported="" name="guru.nidi:graphviz-java:0.7.0" level="project" />
+    <orderEntry type="library" exported="" name="org.jgrapht:jgrapht-io:1.2.0" level="project" />
+    <orderEntry type="library" exported="" name="org.apache.commons:commons-math3:3.6.1" level="project" />
+    <orderEntry type="library" name="org.apache.commons:commons-math3:3.5" level="project" />
     <orderEntry type="library" name="org.json:json:20180813" level="project" />
-    <orderEntry type="library" name="org.apache.commons:commons-math3:3.6.1" level="project" />
+    <orderEntry type="library" name="org.eclipse.jgit:org.eclipse.jgit:5.4.0.201906121030-r" level="project" />
   </component>
 </module>

@@ -24,10 +24,18 @@ public class Metrics {
      */
     public static double[] inoutDegree(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g, String v) {
         double[] inout = {0.0, 0.0};
-        for (DefaultWeightedEdge e : g.incomingEdgesOf(v))
-            inout[0] += g.getEdgeWeight(e);
-        for (DefaultWeightedEdge e : g.outgoingEdgesOf(v))
-            inout[1] += g.getEdgeWeight(e);
+        for (DefaultWeightedEdge e : g.incomingEdgesOf(v)) {
+            //Removing self calls from indegrees
+            if (!g.getEdgeTarget(e).equals(g.getEdgeSource(e)))
+                inout[0] += 1;
+//                inout[0] += g.getEdgeWeight(e);
+        }
+        for (DefaultWeightedEdge e : g.outgoingEdgesOf(v)) {
+            //Removing self calls from outdegrees
+            if (!g.getEdgeTarget(e).equals(g.getEdgeSource(e)))
+                inout[1] += 1;
+//                inout[1] += g.getEdgeWeight(e);
+        }
         return inout;
     }
 

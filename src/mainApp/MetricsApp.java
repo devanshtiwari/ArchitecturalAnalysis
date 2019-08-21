@@ -34,6 +34,8 @@ public class MetricsApp {
         File CSVdir = new File("/Users/devan/Documents/ArchitecturalAnalysis/CSV");
         HashMap<String, ArrayList<Pair<String, File>>> allCSVFiles = getFiles(CSVdir);
 
+        List<List<String>> nodeModuleCSVCombined = new ArrayList<>();
+
         List<List<String>> wholeProjectCSV = new ArrayList<>();
         List<List<String>> nodeModuleCSV;
         List<List<String>> nodeFileCSV;
@@ -69,8 +71,14 @@ public class MetricsApp {
             csvWriter1.setFile("FunctionNode", projectName);
             csvWriter1.writez(nodeFunctionCSV);
 
-            System.out.println((start-System.currentTimeMillis())/1000D + " Seconds.");
+            nodeModuleCSV.remove(0);
+            nodeModuleCSVCombined.addAll(nodeModuleCSV);
+
+            System.out.println((System.currentTimeMillis()-start)/1000D + " Seconds.");
         }
+
+        csvWriter1.setFile("ModuleNode", "ModuleNodeCombined");
+        csvWriter1.writez(nodeModuleCSVCombined);
 
         System.out.println("Hit Percentage: " + (countLib/(double)total));
         csvWriter1.setFile("AllProjects");

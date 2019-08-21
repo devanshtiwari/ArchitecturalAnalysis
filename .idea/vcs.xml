@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/ImageMagick" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/bash" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/cflow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/ctags" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/curl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/dia" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/gawk" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/grep" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/make" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/odas" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Bad/zsh" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/bzip2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/capstone" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/fleet" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/html2xhtml" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/kterm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/sed" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/sniproxy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/vlany" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/zlib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects/TestCProject" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/TestCProject" vcs="Git" />
   </component>
 </project>

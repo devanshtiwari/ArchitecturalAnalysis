@@ -13,7 +13,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
 
-        String projectDir = "/Users/devan/Documents/ArchitecturalAnalysis/ProjectsSources/Custom";
+        String projectDir = "/Users/devan/Documents/ArchitecturalAnalysis/ProjectsSources/TestProjects";
 
         ArrayList<File> projPaths = DirManager.getDirectories(projectDir);
 
@@ -51,6 +51,3 @@ public class App {
         }
     }
 }
-
-
-

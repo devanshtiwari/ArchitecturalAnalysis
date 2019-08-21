@@ -145,7 +145,7 @@ public class DataOrganiser {
             Graph graph = new Graph(projectName);
             ArrayList<DependencyCSVData> dependencyCSVDataList = mapToDependencyCSVData(csvReader.getCsvData());
             //Add true here to generate dependency graph image of file and module graph.
-            graph.setDependencyCSVData(dependencyCSVDataList,false);
+            graph.setDependencyCSVData(dependencyCSVDataList,true);
             metricsInputContent.setGraph(graph);
 
     }
