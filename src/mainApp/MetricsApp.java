@@ -13,6 +13,7 @@ public class MetricsApp {
 
 
     private static HashMap<String, ArrayList<Pair<String, File>>> getFiles(File CSVDir) throws InvalidMasterSourceCodeDirectory {
+
         HashMap<String, ArrayList<Pair<String, File>>> allCSVFiles = new HashMap<>();
 
         ArrayList<File> CSVDirs = DirManager.getDirectories(CSVDir);
@@ -26,6 +27,7 @@ public class MetricsApp {
                 allCSVFiles.putIfAbsent(csvFile.getName().substring(0, csvFile.getName().length() - 4), new ArrayList<>(Arrays.asList(pair)));
             }
         }
+
         return allCSVFiles;
     }
 

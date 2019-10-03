@@ -1,59 +1,69 @@
 package gitinfo;
 
 
-import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.NoHeadException;
-import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Stack;
 
 public class GitLog {
 
-    List<RevCommit> commitList;
+
+//    public static List<RevCommit>  readCommits(File csvFile, File dir) throws IOException {
+//        BufferedReader br  = new BufferedReader(new FileReader(csvFile));
+//        String line;
+//        Git git = Git.open(dir);
+//        RevWalk revWalk = new RevWalk(git.getRepository());
+//        while((line = br.readLine()) != null)
+//        {
+//            RevCommit commit = null;
+//            String commitHash = line;
+//            if(commitHash.length() != 0)
+//                commit = revWalk.parseCommit(ObjectId.fromString(commitHash));
+//        }
+//        return commitList;
+//    }
+
+    public Stack<RevCommit> commitList;
     Git git;
 
-    GitLog(File dir) throws GitAPIException {
-        try {
-            git = Git.open(dir);
-            commitList = new ArrayList<>();
+    public GitLog(File dir) throws IOException, GitAPIException {
+        git = Git.open(dir);
+        commitList = new Stack<>();
 
-//
+        Iterable<RevCommit> logs = git.log().add(git.getRepository().resolve("remotes/origin/master")).call();
+
+        for(RevCommit revCommit: logs){
+            commitList.push(revCommit);
+            System.out.println(revCommit.toString());
+        }
+
+
 //            String line = "";
 //            BufferedReader bufferedReader = gitLogFunction(dir, "isPrime", "evaluate/prime.c");
 //            while( (line = bufferedReader.readLine())!=null) {
 //                System.out.println(line);
 //            }
 
-            Collection<Ref> allRefs = git.getRepository().getRefDatabase().getRefs();
-            RevWalk revWalk = new RevWalk(git.getRepository());
 
-            Iterable<RevCommit> logs = git.log().call();
-            for(Ref ref : allRefs){
-                revWalk.markStart(revWalk.parseCommit(ref.getObjectId()));
-            }
-            for(RevCommit commit: revWalk){
-                commitList.add(commit);
-                System.out.println(commit);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoHeadException e) {
-            e.printStackTrace();
-        } catch (GitAPIException e) {
-            e.printStackTrace();
-        }
-
+//            Collection<Ref> allRefs = git.getRepository().getRefDatabase().getRefs();
+//            RevWalk revWalk = new RevWalk(git.getRepository());
+//
+//            Iterable<RevCommit> logs = git.log().call();
+//            for(Ref ref : allRefs){
+//                revWalk.markStart(revWalk.parseCommit(ref.getObjectId()));
+//            }
+//            for(RevCommit commit: revWalk){
+//                commitList.add(commit);
+//                System.out.println(commit);
+//            }
     }
 
     public void checkOut(RevCommit commit) throws GitAPIException {

@@ -28,6 +28,13 @@ public class CSVWriter {
         this.fileWriter = new FileWriter(new File(directory,file.getName()+".csv"));
     }
 
+    //Temporary TODO
+    public void setFile(String subDir, File file, int counter) throws IOException {
+        File directory = new File(writeDir+File.separator+subDir);
+        directory.mkdirs();
+        this.fileWriter = new FileWriter(new File(directory,file.getName()+ counter +".csv"));
+    }
+
     public void setFile(File file) throws IOException {
         this.fileWriter = new FileWriter(new File(writeDir,file.getName()+".csv"));
     }

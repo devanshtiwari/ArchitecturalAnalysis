@@ -1,6 +1,7 @@
 package metrics;
 
 import dependencyManager.Cluster;
+import dependencyManager.Graph;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.jgrapht.Graphs;
@@ -634,9 +635,9 @@ public class MetricsContainer {
 //        LinkedHashMap<String, double[]> fileLinkedHashMapMatrix = Metrics.matrix(fileG);
 //        LinkedHashMap<String, double[]> linkedHashMapMatrix = Metrics.matrix(g);
 
-        HashMap<String, double[]> fileFinalMatrix = getFinalMatrix(fileG);
+        Graph.AdjacencyMatrix fileFinalMatrix = getFinalMatrix(fileG);
 //        HashMap<String, double[]> funcFinalMatrix = getFinalMatrix(funcG);
-        HashMap<String, double[]> moduleFinalMatrix = getFinalMatrix(moduleG);
+        Graph.AdjacencyMatrix moduleFinalMatrix = getFinalMatrix(moduleG);
 
         double propagationCost = 0;
         propagationCost = calculateFanInFanOut(fileG, fileBasedMetrics, fileFinalMatrix);
@@ -678,67 +679,86 @@ public class MetricsContainer {
 //            System.out.println("The value of Propagation Cost is: " + sum/(f.length*f.length));
     }
 
-    double calculateFanInFanOut(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g, HashMap hashMap, HashMap<String, double[]> linkedHashMapMatrix) throws ExportException {
+    double calculateFanInFanOut(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g, HashMap hashMap, Graph.AdjacencyMatrix adjacencyMatrix) {
 //        LinkedHashMap<String, double[]> fileLinkedHashMapMatrix = Metrics.matrix(fileG);
 //        LinkedHashMap<String, double[]> functionLinkedHashMapMatrix = Metrics.matrix(funcG);
 //        LinkedHashMap<String, double[]> moduleLinkedHashMapMatrix = Metrics.matrix(moduleG);
 
 
-        assert linkedHashMapMatrix != null;
+//        assert linkedHashMapMatrix != null;
 
-        if(linkedHashMapMatrix == null)
+        if(adjacencyMatrix == null)
             return -20;
-        double [] columnWise = new double[linkedHashMapMatrix.size()];
+        if(adjacencyMatrix.nodes.length == 0)
+            return -20;
+        double [] columnWise = new double[adjacencyMatrix.nodes.length];
         int k = 0;
         int sum1 = 0, sum2 = 0;
-        for(String file : linkedHashMapMatrix.keySet()){
-            if(hashMap.get(file)==null)
-                continue;
-            //Condition that if the file does not have recongizable function, then ignore it.
-            double [] row = linkedHashMapMatrix.get(file);
+        int n = adjacencyMatrix.nodes.length;
+        for(int i = 0; i < n; i++){
             double rowWise = 0;
-            for(int i = 0; i < row.length; i++){
-                rowWise += (row[i] != 0)? 1 : 0;
-                columnWise[i] += (row[i] != 0)? 1 : 0;;
+            for(int j = 0; j < n; j++){
+                rowWise += adjacencyMatrix.values[i][j] != 0 ? 1: 0;
+                columnWise[j] += adjacencyMatrix.values[i][j] != 0 ? 1:0;
             }
-
-            ((MetricsClass)hashMap.get(file)).fanOutVisibility =  rowWise / (double) row.length;
+            ((MetricsClass)hashMap.get(adjacencyMatrix.nodes[i])).fanOutVisibility =  rowWise / (double) n;
             sum1 += rowWise;
         }
-        k = 0;
-        for(String file : linkedHashMapMatrix.keySet()){
-            if(hashMap.get(file) != null) {
-                ((MetricsClass)hashMap.get(file)).fanInVisibility = columnWise[k] / (double) columnWise.length;
-            }
-            sum2 += columnWise[k];
-            k++;
+
+
+//        for(String file : adjacencyMatrix.nodes){
+////            if(hashMap.get(file)==null)
+////                continue;
+//            //Condition that if the file does not have recongizable function, then ignore it.
+//            double [] row = linkedHashMapMatrix.get(file);
+//            double rowWise = 0;
+//            for(int i = 0; i < row.length; i++){
+//                rowWise += (row[i] != 0)? 1 : 0;
+//                columnWise[i] += (row[i] != 0)? 1 : 0;
+//            }
+//
+//            ((MetricsClass)hashMap.get(file)).fanOutVisibility =  rowWise / (double) row.length;
+//            sum1 += rowWise;
+//        }
+        for(int i = 0; i < n; i++){
+            ((MetricsClass)hashMap.get(adjacencyMatrix.nodes[i])).fanInVisibility = columnWise[i] / (double) columnWise.length;
+            sum2 += columnWise[i];
         }
+//        for(String file : linkedHashMapMatrix.keySet()){
+//            if(hashMap.get(file) != null) {
+//                ((MetricsClass)hashMap.get(file)).fanInVisibility = columnWise[k] / (double) columnWise.length;
+//            }
+//            sum2 += columnWise[k];
+//            k++;
+//        }
 
         return  ((double)sum1 / (double)(columnWise.length * columnWise.length));
     }
 
-    HashMap<String, double[]> getFinalMatrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g) throws Exception {
-        LinkedHashMap<String, double[]> fileLinkedHashMapMatrix = Metrics.matrix(g);
-        if(fileLinkedHashMapMatrix == null)
+    //Validated
+    Graph.AdjacencyMatrix getFinalMatrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> g) throws Exception {
+        Graph.AdjacencyMatrix adjacencyMatrix = Metrics.matrix(g);
+
+        if(adjacencyMatrix.nodes.length == 0)
             return null;
-        double adMatrix[][] = new double[fileLinkedHashMapMatrix.size()][fileLinkedHashMapMatrix.size()];
-        int l = 0;
-        for(String s : fileLinkedHashMapMatrix.keySet()){
-            double []t = fileLinkedHashMapMatrix.get(s);
-            adMatrix[l++] = t;
-        }
-        RealMatrix realMatrix = MatrixUtils.createRealMatrix(adMatrix);
+//        double adMatrix[][] = new double[fileLinkedHashMapMatrix.size()][fileLinkedHashMapMatrix.size()];
+//        int l = 0;
+//        for(String s : fileLinkedHashMapMatrix.keySet()){
+//            double []t = fileLinkedHashMapMatrix.get(s);
+//            adMatrix[l++] = t;
+//        }
+        RealMatrix realMatrix = MatrixUtils.createRealMatrix(adjacencyMatrix.values);
         RealMatrix finalMatrix = MatrixUtils.createRealIdentityMatrix(realMatrix.getColumnDimension());
 
         for(int i = 1; i<realMatrix.getColumnDimension()-1; i++) {
             finalMatrix = finalMatrix.add(realMatrix.power(i));
         }
         int i = 0;
-        HashMap<String, double[]> finalFileLinkedHashMapMatrix = new HashMap<>();
-        for(String s : fileLinkedHashMapMatrix.keySet()){
-            finalFileLinkedHashMapMatrix.put(s,finalMatrix.getRow(i++));
-        }
-        return finalFileLinkedHashMapMatrix;
+        Graph.AdjacencyMatrix propagatedAdjacency = new Graph.AdjacencyMatrix(adjacencyMatrix.nodes.length);
+        propagatedAdjacency.nodes = adjacencyMatrix.nodes;
+        propagatedAdjacency.values = finalMatrix.getData();
+
+        return propagatedAdjacency;
     }
 
     void abstraction(){

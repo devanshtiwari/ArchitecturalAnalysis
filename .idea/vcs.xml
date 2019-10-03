@@ -22,7 +22,17 @@
     <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/sniproxy" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/vlany" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ProjectsSources/Good/zlib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestCProject" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects/TestCProject" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects/clib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects/klone" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects/mozjpeg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects/mpv" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects/uClibc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects2/clib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects2/klone" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects2/mozjpeg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ProjectsSources/TestProjects2/mpv" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/TestCProject" vcs="Git" />
   </component>
 </project>

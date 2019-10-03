@@ -20,6 +20,16 @@ import static java.lang.Boolean.TRUE;
 
 public class Graph {
 
+    public static class AdjacencyMatrix{
+        public String []nodes;
+        public double [][]values;
+
+        public AdjacencyMatrix(int n) {
+            nodes = new String[n];
+            values = new double[n][n];
+        }
+    }
+
     private DirectedPseudograph<String, DefaultEdge> tempfGraph = new DirectedPseudograph<>(DefaultEdge.class);
 
     public HashMap<String, Cluster> getClusterHashMap() {

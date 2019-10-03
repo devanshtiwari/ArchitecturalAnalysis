@@ -1,5 +1,6 @@
 package metrics;
 
+import dependencyManager.Graph;
 import org.jgrapht.graph.*;
 import org.jgrapht.io.*;
 
@@ -58,7 +59,7 @@ public class Metrics {
         return cnum;
     }
 
-    public static LinkedHashMap<String, double[]> matrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> receivedGraph) throws Exception {
+    public static Graph.AdjacencyMatrix matrix(DirectedWeightedPseudograph<String, DefaultWeightedEdge> receivedGraph) throws Exception {
 
         OutputStream output = new OutputStream() {
             private StringBuilder string = new StringBuilder();
@@ -79,9 +80,6 @@ public class Metrics {
         csvExporter.setParameter(CSVFormat.Parameter.MATRIX_FORMAT_NODEID, true);
         csvExporter.setFormat(CSVFormat.MATRIX);
 
-        LinkedHashMap<String, double[]> linkedHashMap = new LinkedHashMap<>();
-        LinkedHashMap<String, TreeMap> matrixx = new LinkedHashMap<>();
-
 //        ComponentNameProvider<String> componentNameProvider = new ComponentNameProvider<String>() {
 //            @Override
 //            public String getName(String s) {
@@ -97,21 +95,23 @@ public class Metrics {
 
         String[] v = scanner.nextLine().split(",", -1);
         int l = 0;
+        int n = receivedGraph.vertexSet().size();
+        Graph.AdjacencyMatrix adjacencyMatrix = new Graph.AdjacencyMatrix(n);
+        int j = 0;
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] splits = line.split(",", -1);
             String vertex = splits[0];
+            adjacencyMatrix.nodes[j] = splits[0];
             double row[] = new double[splits.length - 1];
             for (int i = 1; i < splits.length; i++) {
                 row[i - 1] = Integer.parseInt(splits[i]);
             }
             if (!vertex.equals(v[++l]))
                 throw new Exception("Should not happen");
-            linkedHashMap.put(vertex, row);
+            adjacencyMatrix.values[j++] = row;
         }
 
-        if (linkedHashMap.size() == 0)
-            return null;
-        return linkedHashMap;
+        return adjacencyMatrix;
     }
 }
